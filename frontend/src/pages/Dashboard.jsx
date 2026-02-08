@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Container,
-    AppBar,
-    Toolbar,
+    Box,
     Typography,
     Button,
-    Box,
     Grid,
     Tabs,
     Tab,
     CircularProgress,
 } from '@mui/material';
-import { Logout, Upload } from '@mui/icons-material';
+import { Add, Receipt, Warning, CheckCircle } from '@mui/icons-material';
+import Sidebar from '../components/Sidebar';
+import TopBar from '../components/TopBar';
+import StatsCard from '../components/StatsCard';
 import WarrantyCard from '../components/WarrantyCard';
 import UploadDialog from '../components/UploadDialog';
 import { warrantyAPI } from '../services/api';
@@ -24,13 +24,15 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [tabValue, setTabValue] = useState(0);
-    const [user, setUser] = useState({});
 
     useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        setUser(userData);
+        const user = localStorage.getItem('user');
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         fetchWarranties();
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         filterWarranties();
@@ -71,11 +73,6 @@ const Dashboard = () => {
         setFilteredWarranties(filtered);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/login');
-    };
-
     const handleUploadSuccess = () => {
         setUploadDialogOpen(false);
         fetchWarranties();
@@ -90,114 +87,172 @@ const Dashboard = () => {
         }
     };
 
+    // Calculate statistics
+    const totalAssets = warranties.reduce((sum, w) => sum + (parseFloat(w.assetPrice) || 0), 0);
+    const expiringSoonCount = warranties.filter(w => w.status === 'EXPIRING_SOON').length;
+    const activeCount = warranties.filter(w => w.status === 'ACTIVE').length;
+
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-            <AppBar
-                position="static"
-                elevation={0}
-                sx={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                }}
-            >
-                <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
-                        Warranty Wallet
-                    </Typography>
-                    <Typography variant="body1" sx={{ mr: 3 }}>
-                        Welcome, {user.username}!
-                    </Typography>
-                    <Button
-                        color="inherit"
-                        startIcon={<Upload />}
-                        onClick={() => setUploadDialogOpen(true)}
-                        sx={{ mr: 2 }}
-                    >
-                        Scan Bill
-                    </Button>
-                    <Button
-                        color="inherit"
-                        startIcon={<Logout />}
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </Button>
-                </Toolbar>
-            </AppBar>
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+            <Sidebar />
 
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Box sx={{ mb: 4 }}>
-                    <Typography variant="h4" gutterBottom fontWeight="bold">
-                        Your Warranties
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                        Track and manage all your product warranties in one place
-                    </Typography>
-                </Box>
+            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <TopBar />
 
-                <Tabs
-                    value={tabValue}
-                    onChange={(e, newValue) => setTabValue(newValue)}
-                    sx={{ mb: 3 }}
-                    variant="scrollable"
-                    scrollButtons="auto"
-                >
-                    <Tab label={`All (${warranties.length})`} />
-                    <Tab
-                        label={`Active (${warranties.filter(w => w.status === 'ACTIVE').length})`}
-                        sx={{ color: 'success.main' }}
-                    />
-                    <Tab
-                        label={`Expiring Soon (${warranties.filter(w => w.status === 'EXPIRING_SOON').length})`}
-                        sx={{ color: 'warning.main' }}
-                    />
-                    <Tab
-                        label={`Expired (${warranties.filter(w => w.status === 'EXPIRED').length})`}
-                        sx={{ color: 'error.main' }}
-                    />
-                </Tabs>
-
-                {loading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-                        <CircularProgress />
+                <Box sx={{ flexGrow: 1, p: 4 }}>
+                    {/* Page Header */}
+                    <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    fontWeight: 700,
+                                    color: 'var(--text-primary)',
+                                    mb: 1,
+                                }}
+                            >
+                                Your Warranties
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    color: 'var(--text-secondary)',
+                                }}
+                            >
+                                Manage and track protection for all your assets in one place.
+                            </Typography>
+                        </Box>
+                        <Button
+                            variant="contained"
+                            startIcon={<Add />}
+                            onClick={() => setUploadDialogOpen(true)}
+                            sx={{
+                                backgroundColor: 'var(--primary-terracotta)',
+                                color: 'white',
+                                px: 3,
+                                py: 1.5,
+                                borderRadius: 'var(--border-radius-sm)',
+                                fontWeight: 600,
+                                boxShadow: 'var(--shadow-sm)',
+                                '&:hover': {
+                                    backgroundColor: 'var(--primary-terracotta-hover)',
+                                    boxShadow: 'var(--shadow-md)',
+                                },
+                            }}
+                        >
+                            Add New Warranty
+                        </Button>
                     </Box>
-                ) : (
-                    <Grid container spacing={3}>
-                        {filteredWarranties.length === 0 ? (
-                            <Grid item xs={12}>
-                                <Box
-                                    sx={{
-                                        textAlign: 'center',
-                                        py: 8,
-                                        px: 2,
-                                        bgcolor: 'background.paper',
-                                        borderRadius: 4,
-                                    }}
-                                >
-                                    <Typography variant="h6" color="text.secondary" gutterBottom>
-                                        No warranties found
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                                        Upload a bill to get started
-                                    </Typography>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<Upload />}
-                                        onClick={() => setUploadDialogOpen(true)}
-                                    >
-                                        Scan Your First Bill
-                                    </Button>
-                                </Box>
-                            </Grid>
-                        ) : (
-                            filteredWarranties.map((warranty) => (
-                                <Grid item xs={12} sm={6} md={4} key={warranty.id}>
-                                    <WarrantyCard warranty={warranty} onDelete={handleDelete} />
-                                </Grid>
-                            ))
-                        )}
+
+                    {/* Tabs */}
+                    <Box sx={{ mb: 3, borderBottom: 1, borderColor: 'var(--border-color)' }}>
+                        <Tabs
+                            value={tabValue}
+                            onChange={(e, newValue) => setTabValue(newValue)}
+                            sx={{
+                                '& .MuiTab-root': {
+                                    textTransform: 'none',
+                                    fontWeight: 500,
+                                    fontSize: '0.9375rem',
+                                    color: 'var(--text-secondary)',
+                                    '&.Mui-selected': {
+                                        color: 'var(--primary-terracotta)',
+                                    },
+                                },
+                                '& .MuiTabs-indicator': {
+                                    backgroundColor: 'var(--primary-terracotta)',
+                                    height: 3,
+                                    borderRadius: '3px 3px 0 0',
+                                },
+                            }}
+                        >
+                            <Tab label={`All Warranties (${warranties.length})`} />
+                            <Tab label={`Active (${warranties.filter(w => w.status === 'ACTIVE').length})`} />
+                            <Tab label={`Expiring Soon (${warranties.filter(w => w.status === 'EXPIRING_SOON').length})`} />
+                            <Tab label={`Expired (${warranties.filter(w => w.status === 'EXPIRED').length})`} />
+                        </Tabs>
+                    </Box>
+
+                    {/* Stats Cards */}
+                    <Grid container spacing={3} sx={{ mb: 4 }}>
+                        <Grid item xs={12} md={4}>
+                            <StatsCard
+                                icon={Receipt}
+                                label="Total Assets"
+                                value={`$${totalAssets.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <StatsCard
+                                icon={Warning}
+                                label="Expiring Soon"
+                                value={`${expiringSoonCount} Product${expiringSoonCount !== 1 ? 's' : ''}`}
+                                iconBgColor="var(--status-warning)"
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <StatsCard
+                                icon={CheckCircle}
+                                label="Active Protection"
+                                value={`${activeCount} Item${activeCount !== 1 ? 's' : ''}`}
+                                iconBgColor="var(--status-active)"
+                            />
+                        </Grid>
                     </Grid>
-                )}
-            </Container>
+
+                    {/* Warranty Cards */}
+                    {loading ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+                            <CircularProgress sx={{ color: 'var(--primary-terracotta)' }} />
+                        </Box>
+                    ) : (
+                        <Grid container spacing={3}>
+                            {filteredWarranties.length === 0 ? (
+                                <Grid item xs={12}>
+                                    <Box
+                                        sx={{
+                                            textAlign: 'center',
+                                            py: 8,
+                                            px: 2,
+                                            bgcolor: 'white',
+                                            borderRadius: 'var(--border-radius-md)',
+                                            boxShadow: 'var(--shadow-sm)',
+                                        }}
+                                    >
+                                        <Typography variant="h6" color="var(--text-secondary)" gutterBottom>
+                                            No warranties found
+                                        </Typography>
+                                        <Typography variant="body2" color="var(--text-tertiary)" sx={{ mb: 3 }}>
+                                            {tabValue === 0 ? 'Upload a bill to get started' : 'No warranties in this category'}
+                                        </Typography>
+                                        {tabValue === 0 && (
+                                            <Button
+                                                variant="contained"
+                                                startIcon={<Add />}
+                                                onClick={() => setUploadDialogOpen(true)}
+                                                sx={{
+                                                    backgroundColor: 'var(--primary-terracotta)',
+                                                    '&:hover': {
+                                                        backgroundColor: 'var(--primary-terracotta-hover)',
+                                                    },
+                                                }}
+                                            >
+                                                Scan Your First Bill
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </Grid>
+                            ) : (
+                                filteredWarranties.map((warranty) => (
+                                    <Grid item xs={12} sm={6} md={4} key={warranty.id}>
+                                        <WarrantyCard warranty={warranty} onDelete={handleDelete} />
+                                    </Grid>
+                                ))
+                            )}
+                        </Grid>
+                    )}
+                </Box>
+            </Box>
 
             <UploadDialog
                 open={uploadDialogOpen}

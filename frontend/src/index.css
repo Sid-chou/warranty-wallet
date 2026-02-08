@@ -1,5 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+  /* Tesseract Color Palette */
+  --primary-terracotta: #B85C4E;
+  --primary-terracotta-hover: #A04D40;
+  --primary-terracotta-light: #D87B6E;
+  
+  --background-beige: #F5F2EE;
+  --sidebar-gray: #EFEBE7;
+  --card-white: #FFFFFF;
+  
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #9E9E9E;
+  
+  --border-color: #E0DDD9;
+  --divider-color: #EEEBE7;
+  
+  /* Status Colors */
+  --status-active: #4CAF50;
+  --status-active-bg: #E8F5E9;
+  --status-warning: #FF9800;
+  --status-warning-bg: #FFF3E0;
+  --status-error: #F44336;
+  --status-error-bg: #FFEBEE;
+  
+  /* Design Tokens */
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+  
+  --sidebar-width: 220px;
+  --topbar-height: 64px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,6 +56,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-beige);
+  color: var(--text-primary);
 }
 
 #root {
@@ -24,14 +70,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--sidebar-gray);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--text-tertiary);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--text-secondary);
 }

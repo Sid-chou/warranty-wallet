@@ -54,7 +54,7 @@ const Login = () => {
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #B85C4E 0%, #A04D40 100%)',
             }}
         >
             <Container maxWidth="sm">
@@ -126,9 +126,9 @@ const Login = () => {
                                 mt: 3,
                                 mb: 2,
                                 py: 1.5,
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                background: 'linear-gradient(135deg, #B85C4E 0%, #A04D40 100%)',
                                 '&:hover': {
-                                    background: 'linear-gradient(135deg, #5568d3 0%, #63408b 100%)',
+                                    background: 'linear-gradient(135deg, #A04D40 0%, #8E3F33 100%)',
                                 },
                             }}
                         >
@@ -141,7 +141,7 @@ const Login = () => {
                             Don't have an account?{' '}
                             <Link
                                 to="/signup"
-                                style={{ color: '#667eea', textDecoration: 'none', fontWeight: 600 }}
+                                style={{ color: '#B85C4E', textDecoration: 'none', fontWeight: 600 }}
                             >
                                 Sign Up
                             </Link>

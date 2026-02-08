@@ -6,22 +6,17 @@ import {
     Typography,
     Chip,
     Box,
-    IconButton,
-    Collapse,
+    Button,
     Grid,
-    LinearProgress,
 } from '@mui/material';
 import {
-    Delete,
-    ExpandMore,
-    Timer,
-    CalendarToday,
-    Receipt,
-    AttachMoney,
+    Laptop,
+    Headphones,
+    Watch,
+    Article,
 } from '@mui/icons-material';
 
 const WarrantyCard = ({ warranty, onDelete }) => {
-    const [expanded, setExpanded] = useState(false);
     const [countdown, setCountdown] = useState('');
 
     useEffect(() => {
@@ -48,56 +43,68 @@ const WarrantyCard = ({ warranty, onDelete }) => {
         }
 
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        if (days > 30) {
-            setCountdown(`${days} days`);
-        } else if (days > 0) {
-            setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-        } else {
-            setCountdown(`${hours}h ${minutes}m ${seconds}s`);
-        }
+        setCountdown(`${days} days`);
     };
 
     const getStatusColor = () => {
         switch (warranty.status) {
             case 'ACTIVE':
-                return 'success';
+                return 'var(--status-active)';
             case 'EXPIRING_SOON':
-                return 'warning';
+                return 'var(--status-warning)';
             case 'EXPIRED':
-                return 'error';
+                return 'var(--status-error)';
             default:
-                return 'default';
+                return 'var(--text-tertiary)';
+        }
+    };
+
+    const getStatusBgColor = () => {
+        switch (warranty.status) {
+            case 'ACTIVE':
+                return 'var(--status-active-bg)';
+            case 'EXPIRING_SOON':
+                return 'var(--status-warning-bg)';
+            case 'EXPIRED':
+                return 'var(--status-error-bg)';
+            default:
+                return '#f5f5f5';
         }
     };
 
     const getStatusText = () => {
+        if (warranty.status === 'EXPIRING_SOON' && countdown !== 'Expired' && countdown !== 'Unknown') {
+            return `EXPIRING IN ${countdown.toUpperCase()}`;
+        }
         switch (warranty.status) {
             case 'ACTIVE':
-                return 'Active';
-            case 'EXPIRING_SOON':
-                return 'Expiring Soon';
+                return 'ACTIVE';
             case 'EXPIRED':
-                return 'Expired';
+                return 'EXPIRED';
             default:
-                return 'Unknown';
+                return warranty.status;
         }
     };
 
-    const getProgressValue = () => {
-        if (!warranty.expiryDate || !warranty.invoiceDate) return 0;
+    // Get product icon based on category or product name
+    const getProductIcon = () => {
+        const productName = (warranty.productName || '').toLowerCase();
+        if (productName.includes('laptop') || productName.includes('macbook') || productName.includes('computer')) {
+            return <Laptop sx={{ fontSize: 48 }} />;
+        }
+        if (productName.includes('headphone') || productName.includes('earphone') || productName.includes('airpod')) {
+            return <Headphones sx={{ fontSize: 48 }} />;
+        }
+        if (productName.includes('watch') || productName.includes('smartwatch')) {
+            return <Watch sx={{ fontSize: 48 }} />;
+        }
+        return <Article sx={{ fontSize: 48 }} />;
+    };
 
-        const now = new Date();
-        const start = new Date(warranty.invoiceDate);
-        const end = new Date(warranty.expiryDate);
-
-        const total = end - start;
-        const elapsed = now - start;
-
-        return Math.min(100, Math.max(0, (elapsed / total) * 100));
+    const getPrimaryAction = () => {
+        if (warranty.status === 'EXPIRED') return 'Renew';
+        if (warranty.status === 'EXPIRING_SOON') return 'Extend';
+        return 'Claim';
     };
 
     return (
@@ -106,147 +113,161 @@ const WarrantyCard = ({ warranty, onDelete }) => {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'all 0.3s',
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: 'var(--border-radius-md)',
+                transition: 'all 0.2s',
+                position: 'relative',
                 '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: '0 12px 20px -10px rgba(0, 0, 0, 0.2)',
+                    boxShadow: 'var(--shadow-md)',
                 },
             }}
         >
-            <LinearProgress
-                variant="determinate"
-                value={getProgressValue()}
-                color={getStatusColor()}
-                sx={{ height: 4 }}
-            />
+            {/* Status Badge */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    zIndex: 1,
+                }}
+            >
+                <Chip
+                    label={getStatusText()}
+                    sx={{
+                        backgroundColor: getStatusBgColor(),
+                        color: getStatusColor(),
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        height: 24,
+                        borderRadius: '6px',
+                        letterSpacing: '0.5px',
+                    }}
+                />
+            </Box>
 
-            <CardContent sx={{ flexGrow: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
-                    <Typography variant="h6" component="div" noWrap sx={{ flexGrow: 1, fontWeight: 600 }}>
-                        {warranty.productName || 'Unknown Product'}
-                    </Typography>
-                    <Chip
-                        label={getStatusText()}
-                        color={getStatusColor()}
-                        size="small"
-                        sx={{ ml: 1 }}
-                    />
+            <CardContent sx={{ flexGrow: 1, textAlign: 'center', pt: 3 }}>
+                {/* Product Icon */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 2,
+                        color: 'var(--text-primary)',
+                    }}
+                >
+                    {getProductIcon()}
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <Timer sx={{ fontSize: 20, mr: 1, color: 'text.secondary' }} />
-                        <Typography variant="body2" color="text.secondary">
-                            Time Remaining:
+                {/* Product Name */}
+                <Typography
+                    variant="h6"
+                    sx={{
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        mb: 0.5,
+                        fontSize: '1.125rem',
+                    }}
+                >
+                    {warranty.productName || 'Unknown Product'}
+                </Typography>
+
+                {/* Manufacturer + Serial */}
+                <Typography
+                    variant="body2"
+                    sx={{
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.875rem',
+                        mb: 3,
+                    }}
+                >
+                    {warranty.merchantName || 'Unknown'} • Serial: {warranty.serialNumber?.slice(-8) || 'N/A'}
+                </Typography>
+
+                {/* Dates in Two Columns */}
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                    <Grid item xs={6}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: 'var(--text-tertiary)',
+                                fontSize: '0.75rem',
+                                display: 'block',
+                                mb: 0.5,
+                            }}
+                        >
+                            Purchase Date
                         </Typography>
-                    </Box>
-                    <Typography
-                        variant="h5"
-                        color={getStatusColor() + '.main'}
-                        fontWeight="bold"
-                        sx={{ ml: 3.5 }}
-                    >
-                        {countdown}
-                    </Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <CalendarToday sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-                    <Typography variant="body2" color="text.secondary">
-                        Expires: {warranty.expiryDate ? new Date(warranty.expiryDate).toLocaleDateString() : 'Unknown'}
-                    </Typography>
-                </Box>
-
-                {warranty.merchantName && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        Store: {warranty.merchantName}
-                    </Typography>
-                )}
-
-                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
-                        <Grid container spacing={2}>
-                            {warranty.invoiceNumber && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Invoice Number
-                                    </Typography>
-                                    <Typography variant="body2">{warranty.invoiceNumber}</Typography>
-                                </Grid>
-                            )}
-                            {warranty.invoiceDate && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Purchase Date
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {new Date(warranty.invoiceDate).toLocaleDateString()}
-                                    </Typography>
-                                </Grid>
-                            )}
-                            {warranty.assetPrice && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Price
-                                    </Typography>
-                                    <Typography variant="body2">₹{warranty.assetPrice}</Typography>
-                                </Grid>
-                            )}
-                            {warranty.warrantyPeriod && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Warranty Period
-                                    </Typography>
-                                    <Typography variant="body2">{warranty.warrantyPeriod}</Typography>
-                                </Grid>
-                            )}
-                            {warranty.serialNumber && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Serial Number
-                                    </Typography>
-                                    <Typography variant="body2">{warranty.serialNumber}</Typography>
-                                </Grid>
-                            )}
-                            {warranty.modelNumber && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Model Number
-                                    </Typography>
-                                    <Typography variant="body2">{warranty.modelNumber}</Typography>
-                                </Grid>
-                            )}
-                            {warranty.paymentMethod && (
-                                <Grid item xs={12}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Payment Method
-                                    </Typography>
-                                    <Typography variant="body2">{warranty.paymentMethod}</Typography>
-                                </Grid>
-                            )}
-                        </Grid>
-                    </Box>
-                </Collapse>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: 'var(--text-primary)',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
+                            }}
+                        >
+                            {warranty.invoiceDate ? new Date(warranty.invoiceDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: 'var(--text-tertiary)',
+                                fontSize: '0.75rem',
+                                display: 'block',
+                                mb: 0.5,
+                            }}
+                        >
+                            Expires
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: 'var(--text-primary)',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
+                            }}
+                        >
+                            {warranty.expiryDate ? new Date(warranty.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                        </Typography>
+                    </Grid>
+                </Grid>
             </CardContent>
 
-            <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-                <IconButton
-                    onClick={() => setExpanded(!expanded)}
+            {/* Action Buttons */}
+            <CardActions sx={{ p: 2, pt: 0, gap: 1 }}>
+                <Button
+                    variant="outlined"
+                    fullWidth
                     sx={{
-                        transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.3s',
+                        color: 'var(--text-secondary)',
+                        borderColor: 'var(--border-color)',
+                        borderRadius: 'var(--border-radius-sm)',
+                        fontWeight: 600,
+                        '&:hover': {
+                            borderColor: 'var(--text-secondary)',
+                            backgroundColor: 'rgba(0,0,0,0.02)',
+                        },
                     }}
-                    size="small"
                 >
-                    <ExpandMore />
-                </IconButton>
-                <IconButton
-                    onClick={() => onDelete(warranty.id)}
-                    color="error"
-                    size="small"
+                    View Details
+                </Button>
+                <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                        backgroundColor: 'var(--primary-terracotta)',
+                        borderRadius: 'var(--border-radius-sm)',
+                        fontWeight: 600,
+                        boxShadow: 'var(--shadow-sm)',
+                        '&:hover': {
+                            backgroundColor: 'var(--primary-terracotta-hover)',
+                            boxShadow: 'var(--shadow-md)',
+                        },
+                    }}
                 >
-                    <Delete />
-                </IconButton>
+                    {getPrimaryAction()}
+                </Button>
             </CardActions>
         </Card>
     );

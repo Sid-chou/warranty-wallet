@@ -1,8 +1,8 @@
 services:
   - type: web
     name: warranty-wallet-backend
-    buildCommand: cd backend && mvn clean install -DskipTests
-    startCommand: cd backend && java -Dspring.profiles.active=prod -jar target/backend-1.0.0.jar
+    runtime: docker
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_DATA_MONGODB_URI
         sync: false

@@ -1,7 +1,6 @@
 services:
   - type: web
     name: warranty-wallet-backend
-    runtime: java
     buildCommand: cd backend && mvn clean install -DskipTests
     startCommand: cd backend && java -Dspring.profiles.active=prod -jar target/backend-1.0.0.jar
     envVars:

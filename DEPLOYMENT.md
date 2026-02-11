@@ -22,7 +22,12 @@ Follow these steps to deploy to **Render** (backend) and **Vercel** (frontend).
 3. Connect your GitHub account
 4. Select your `warranty-wallet` repository
 
-### 1.2 Configure Service Settings
+> ✨ **Good News**: The repository includes `render.yaml` which automatically configures everything!  
+> Render will detect this file and use Java runtime instead of Python.
+
+### 1.2 Configure Service Settings (if needed)
+
+If Render doesn't auto-configure from `render.yaml`, manually set:
 
 ```
 Name: warranty-wallet-backend

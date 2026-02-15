@@ -71,10 +71,20 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+
+        // IMPORTANT: Use specific origin instead of wildcard when credentials are
+        // enabled
+        String allowedOrigin = System.getenv("FRONTEND_URL");
+        if (allowedOrigin == null || allowedOrigin.isEmpty()) {
+            // Fallback for local development
+            allowedOrigin = "http://localhost:5173";
+        }
+
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigin));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -72,13 +72,18 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // IMPORTANT: Use specific origin instead of wildcard when credentials are
-        // enabled
+        // Read from environment variable
         String allowedOrigin = System.getenv("ALLOWED_ORIGINS");
+        System.out.println("DEBUG: ALLOWED_ORIGINS environment variable = " + allowedOrigin);
+
         if (allowedOrigin == null || allowedOrigin.isEmpty()) {
-            // Fallback for local development
             allowedOrigin = "http://localhost:5173";
+            System.out.println("DEBUG: Environment variable is null/empty, using fallback = " + allowedOrigin);
+        } else {
+            System.out.println("DEBUG: Using environment variable value = " + allowedOrigin);
         }
+
+        System.out.println("DEBUG: Final allowed origin for CORS = " + allowedOrigin);
 
         configuration.setAllowedOrigins(Arrays.asList(allowedOrigin));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

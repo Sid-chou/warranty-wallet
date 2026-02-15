@@ -74,7 +74,7 @@ public class SecurityConfig {
 
         // IMPORTANT: Use specific origin instead of wildcard when credentials are
         // enabled
-        String allowedOrigin = System.getenv("FRONTEND_URL");
+        String allowedOrigin = System.getenv("ALLOWED_ORIGINS");
         if (allowedOrigin == null || allowedOrigin.isEmpty()) {
             // Fallback for local development
             allowedOrigin = "http://localhost:5173";

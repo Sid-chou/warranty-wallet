@@ -119,6 +119,7 @@ Your backend needs to allow requests from Vercel:
    Value: https://warranty-wallet-xxxx.vercel.app,http://localhost:5173
    ```
    (Use YOUR actual Vercel URL!)
+   - **Using a custom domain?** Add that origin instead (or as well). The value must match the URL users see in the browser, e.g. `https://myapp.com,https://www.myapp.com`. If you only list the Vercel URL but users visit your custom domain, you'll get **403** (CORS).
 5. Click **"Save Changes"** (auto-redeploys)
 
 ---
@@ -148,7 +149,7 @@ Your backend needs to allow requests from Vercel:
 | Issue | Solution |
 |-------|----------|
 | Build fails on Render | Check "Root Directory" is set to `backend` |
-| CORS error | Verify `ALLOWED_ORIGINS` includes your Vercel URL |
+| CORS error / 403 | Verify `ALLOWED_ORIGINS` includes the **exact** origin users visit (Vercel URL or **custom domain**, e.g. `https://myapp.com`) |
 | Can't connect to DB | Check MongoDB connection string encoding |
 | Frontend can't reach API | Verify `VITE_API_URL` is correct |
 

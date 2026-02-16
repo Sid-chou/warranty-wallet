@@ -38,8 +38,8 @@ api.interceptors.response.use(
 
 // Auth APIs
 export const authAPI = {
-    signup: (data) => api.post('/auth/signup', data),    // ← Add /api
-    login: (data) => api.post('/auth/login', data),      // ← Add /api
+    signup: (data) => api.post('/auth/signup', data),
+    login: (data) => api.post('/auth/login', data),
 };
 // Warranty APIs
 export const warrantyAPI = {

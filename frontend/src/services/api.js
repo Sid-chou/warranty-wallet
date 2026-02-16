@@ -46,11 +46,7 @@ export const warrantyAPI = {
     scanBill: (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        return api.post('/warranties/scan', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+        return api.post('/warranties/scan', formData);
     },
     getAllWarranties: () => api.get('/warranties'),
     getActiveWarranties: () => api.get('/warranties/active'),

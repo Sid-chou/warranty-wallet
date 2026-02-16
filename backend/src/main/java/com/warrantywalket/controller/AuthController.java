@@ -23,6 +23,14 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @GetMapping("/test")
+    public ResponseEntity<?> testAuth() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Auth endpoint is reachable");
+        response.put("timestamp", java.time.Instant.now().toString());
+        return ResponseEntity.ok(response);
+    }
+
     @Autowired
     private AuthenticationManager authenticationManager;
 

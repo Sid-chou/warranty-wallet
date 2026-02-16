@@ -43,50 +43,79 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @GetMapping("/dbtest")
+    public ResponseEntity<?> testDb() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            long count = userRepository.count();
+            response.put("status", "MongoDB connected");
+            response.put("userCount", count);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "MongoDB connection FAILED");
+            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        try {
+            if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Username is already taken");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Email is already in use");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Create new user
+            User user = new User(
+                    signUpRequest.getUsername(),
+                    signUpRequest.getEmail(),
+                    passwordEncoder.encode(signUpRequest.getPassword()));
+
+            userRepository.save(user);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User registered successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "Username is already taken");
-            return ResponseEntity.badRequest().body(error);
+            error.put("error", "Signup failed: " + e.getMessage());
+            error.put("type", e.getClass().getSimpleName());
+            return ResponseEntity.internalServerError().body(error);
         }
-
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Email is already in use");
-            return ResponseEntity.badRequest().body(error);
-        }
-
-        // Create new user
-        User user = new User(
-                signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                passwordEncoder.encode(signUpRequest.getPassword()));
-
-        userRepository.save(user);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully");
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.generateToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = tokenProvider.generateToken(authentication);
 
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userRepository.findByUsername(loginRequest.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return ResponseEntity.ok(new JwtResponse(
-                jwt,
-                user.getId(),
-                user.getUsername(),
-                user.getEmail()));
+            return ResponseEntity.ok(new JwtResponse(
+                    jwt,
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail()));
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Login failed: " + e.getMessage());
+            error.put("type", e.getClass().getSimpleName());
+            return ResponseEntity.internalServerError().body(error);
+        }
     }
 }

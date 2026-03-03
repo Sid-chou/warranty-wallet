@@ -1,8 +1,15 @@
 /* ===== Login Page Styles ===== */
 
 @keyframes loginFloat {
-  0%, 100% { transform: translateY(0) rotate(var(--card-rotate, 0deg)); }
-  50% { transform: translateY(-10px) rotate(var(--card-rotate, 0deg)); }
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--card-rotate, 0deg));
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(var(--card-rotate, 0deg));
+  }
 }
 
 @keyframes fadeInUp {
@@ -10,6 +17,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -21,6 +29,7 @@
     opacity: 0;
     transform: translateX(-40px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -150,18 +159,19 @@
 
 /* Main Chart Card */
 .login-card-chart {
+  position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 320px;
   padding: 24px;
   z-index: 20;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .login-card-chart:hover {
-  transform: translate(-50%, -50%) scale(1.05) !important;
+  transform: translate(-50%, -50%) scale(1.03) !important;
 }
+
 
 .login-card-chart-header {
   display: flex;
@@ -217,8 +227,8 @@
 
 /* Active Warranties Card */
 .login-card-active {
-  left: 0;
-  top: 24px;
+  left: -10px;
+  top: 10px;
   width: 208px;
   --card-rotate: -6deg;
   animation: loginFloat 6s ease-in-out infinite, fadeInUp 0.8s ease-out 0.4s both;
@@ -282,8 +292,8 @@
 
 /* Notification Card */
 .login-card-notification {
-  right: 0;
-  top: 0;
+  right: -10px;
+  top: -5px;
   width: 240px;
   --card-rotate: 3deg;
   animation: loginFloat 5s ease-in-out infinite 1s, fadeInUp 0.8s ease-out 0.6s both;
@@ -337,12 +347,13 @@
 
 /* Product Card */
 .login-card-product {
-  bottom: 32px;
-  right: -16px;
-  width: 256px;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 240px;
   --card-rotate: -3deg;
   animation: loginFloat 7s ease-in-out infinite 0.5s, fadeInUp 0.8s ease-out 0.8s both;
-  z-index: 10;
+  z-index: 5;
 }
 
 .login-card-product-header {
@@ -380,7 +391,7 @@
   display: flex;
 }
 
-.login-card-product-avatars > div {
+.login-card-product-avatars>div {
   height: 24px;
   width: 24px;
   border-radius: 50%;
@@ -388,14 +399,14 @@
   margin-left: -8px;
 }
 
-.login-card-product-avatars > div:first-child {
+.login-card-product-avatars>div:first-child {
   margin-left: 0;
 }
 
 /* Alerts Card */
 .login-card-alerts {
-  bottom: 64px;
-  left: 16px;
+  bottom: -10px;
+  left: 20px;
   width: 176px;
   --card-rotate: 6deg;
   animation: loginFloat 6s ease-in-out infinite 1.5s, fadeInUp 0.8s ease-out 1s both;

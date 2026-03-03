@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-    Container,
-    Paper,
-    TextField,
-    Button,
-    Typography,
-    Box,
-    Alert,
-    InputAdornment,
-    IconButton,
-} from '@mui/material';
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
 import { authAPI } from '../services/api';
+import './Login.css';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -49,107 +38,219 @@ const Login = () => {
     };
 
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                background: 'linear-gradient(135deg, #B85C4E 0%, #A04D40 100%)',
-            }}
-        >
-            <Container maxWidth="sm">
-                <Paper
-                    elevation={24}
-                    sx={{
-                        p: 4,
-                        borderRadius: 4,
-                        backdropFilter: 'blur(10px)',
-                        background: 'rgba(255, 255, 255, 0.95)',
-                    }}
-                >
-                    <Box sx={{ textAlign: 'center', mb: 3 }}>
-                        <LoginIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                        <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-                            Warranty Wallet
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                            Sign in to manage your warranties
-                        </Typography>
-                    </Box>
+        <div className="login-page">
+            {/* ===== Left Panel - Hero with floating cards ===== */}
+            <div className="login-left-panel">
+                <div className="login-left-blur-1"></div>
+                <div className="login-left-blur-2"></div>
+
+                {/* Brand */}
+                <div className="login-brand">
+                    <div className="login-brand-icon">
+                        <span className="material-symbols-outlined" style={{ fontSize: 24 }}>shield</span>
+                    </div>
+                    <span className="login-brand-name">Warranty Wallet</span>
+                </div>
+
+                {/* Floating Cards */}
+                <div className="login-cards-area">
+                    <div className="login-cards-container">
+
+                        {/* Main Chart Card */}
+                        <div className="login-float-card login-card-chart">
+                            <div className="login-card-chart-header">
+                                <span>Warranty Overview</span>
+                                <span className="material-symbols-outlined" style={{ color: '#9ca3af', fontSize: 18 }}>more_horiz</span>
+                            </div>
+                            <div className="login-chart-bars">
+                                <div className="login-chart-bar-group">
+                                    <div className="login-chart-bar-track" style={{ background: '#fff7ed' }}>
+                                        <div className="login-chart-bar-fill" style={{ background: '#E8420A', height: '75%' }}></div>
+                                    </div>
+                                    <span className="login-chart-bar-label">Electronics</span>
+                                </div>
+                                <div className="login-chart-bar-group">
+                                    <div className="login-chart-bar-track" style={{ background: '#f0fdf4' }}>
+                                        <div className="login-chart-bar-fill" style={{ background: '#22c55e', height: '55%' }}></div>
+                                    </div>
+                                    <span className="login-chart-bar-label">Appliances</span>
+                                </div>
+                                <div className="login-chart-bar-group">
+                                    <div className="login-chart-bar-track" style={{ background: '#fefce8' }}>
+                                        <div className="login-chart-bar-fill" style={{ background: '#facc15', height: '40%' }}></div>
+                                    </div>
+                                    <span className="login-chart-bar-label">Vehicles</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Active Warranties Card */}
+                        <div className="login-float-card login-card-active" style={{ transform: 'rotate(-6deg)' }}>
+                            <div className="login-card-active-header">
+                                <div className="login-card-icon login-card-icon-orange">
+                                    <span className="material-symbols-outlined">shield</span>
+                                </div>
+                                <span className="login-card-badge">
+                                    <span className="material-symbols-outlined">arrow_upward</span>
+                                    3 added
+                                </span>
+                            </div>
+                            <div className="login-card-number">24</div>
+                            <div className="login-card-label">Active Warranties</div>
+                        </div>
+
+                        {/* Samsung TV Notification Card */}
+                        <div className="login-float-card login-card-notification" style={{ transform: 'rotate(3deg)' }}>
+                            <div className="login-card-notification-header">
+                                <div className="login-card-notification-icon">
+                                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications_active</span>
+                                </div>
+                                <div className="login-card-notification-info">
+                                    <p className="login-card-notification-title">Samsung TV</p>
+                                    <div className="login-card-notification-badge">12 days left</div>
+                                </div>
+                            </div>
+                            <p className="login-card-notification-date">Expires Mar 15, 2025</p>
+                        </div>
+
+                        {/* Bosch Refrigerator Card */}
+                        <div className="login-float-card login-card-product" style={{ transform: 'rotate(-3deg)' }}>
+                            <div className="login-card-product-header">
+                                <div className="login-card-icon login-card-icon-green">
+                                    <span className="material-symbols-outlined">qr_code_scanner</span>
+                                </div>
+                                <div className="login-card-product-info">
+                                    <p>Bosch Refrigerator</p>
+                                    <p>Purchase: Jan 2024</p>
+                                </div>
+                            </div>
+                            <div className="login-card-product-footer">
+                                <span className="login-card-product-price">$12,402</span>
+                                <div className="login-card-product-avatars">
+                                    <div style={{ background: '#e5e7eb' }}></div>
+                                    <div style={{ background: '#d1d5db' }}></div>
+                                    <div style={{ background: '#9ca3af' }}></div>
+                                    <div style={{
+                                        background: '#E8420A',
+                                        color: '#fff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: 8,
+                                        fontWeight: 700,
+                                    }}>+4</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Alerts Card */}
+                        <div className="login-float-card login-card-alerts" style={{ transform: 'rotate(6deg)' }}>
+                            <div className="login-card-alerts-icon">
+                                <span className="material-symbols-outlined">notifications</span>
+                            </div>
+                            <div className="login-card-number" style={{ fontSize: 30 }}>6</div>
+                            <div className="login-card-label">Alerts This Month</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {/* ===== Right Panel - Login Form ===== */}
+            <div className="login-right-panel">
+                {/* Mobile Brand */}
+                <div className="login-mobile-brand">
+                    <div className="login-mobile-brand-icon">
+                        <span className="material-symbols-outlined">shield</span>
+                    </div>
+                    <span className="login-mobile-brand-name">Warranty Wallet</span>
+                </div>
+
+                <div className="login-form-container">
+                    <div className="login-form-header">
+                        <h1 className="login-form-title">Sign in to Warranty Wallet</h1>
+                        <p className="login-form-subtitle">Manage and track all your warranties in one place.</p>
+                    </div>
 
                     {error && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
+                        <div className="login-error-alert">
+                            <span className="material-symbols-outlined">error</span>
                             {error}
-                        </Alert>
+                        </div>
                     )}
 
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            fullWidth
-                            label="Username"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            margin="normal"
-                            required
-                            autoFocus
-                        />
-                        <TextField
-                            fullWidth
-                            label="Password"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            value={formData.password}
-                            onChange={handleChange}
-                            margin="normal"
-                            required
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            edge="end"
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                        <Button
+                    <form className="login-form" onSubmit={handleSubmit}>
+                        <div className="login-field-group">
+                            <label className="login-field-label" htmlFor="login-username">Username</label>
+                            <div className="login-field-input-wrapper">
+                                <input
+                                    id="login-username"
+                                    className="login-field-input"
+                                    type="text"
+                                    name="username"
+                                    placeholder="Enter your username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                    autoFocus
+                                    autoComplete="username"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="login-field-group">
+                            <label className="login-field-label" htmlFor="login-password">Password</label>
+                            <div className="login-field-input-wrapper">
+                                <input
+                                    id="login-password"
+                                    className="login-field-input login-field-input-password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    autoComplete="current-password"
+                                />
+                                <button
+                                    type="button"
+                                    className="login-password-toggle"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                >
+                                    <span className="material-symbols-outlined">
+                                        {showPassword ? 'visibility' : 'visibility_off'}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="login-options-row">
+                            <label className="login-remember-label">
+                                <input type="checkbox" className="login-remember-checkbox" />
+                                <span className="login-remember-text">Remember me</span>
+                            </label>
+                            <a href="#" className="login-forgot-link">Forgot Password?</a>
+                        </div>
+
+                        <button
                             type="submit"
-                            fullWidth
-                            variant="contained"
-                            size="large"
+                            className="login-submit-btn"
                             disabled={loading}
-                            sx={{
-                                mt: 3,
-                                mb: 2,
-                                py: 1.5,
-                                background: 'linear-gradient(135deg, #B85C4E 0%, #A04D40 100%)',
-                                '&:hover': {
-                                    background: 'linear-gradient(135deg, #A04D40 0%, #8E3F33 100%)',
-                                },
-                            }}
                         >
-                            {loading ? 'Signing in...' : 'Sign In'}
-                        </Button>
+                            {loading ? 'Signing in...' : 'Sign in'}
+                        </button>
                     </form>
 
-                    <Box sx={{ textAlign: 'center', mt: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            Don't have an account?{' '}
-                            <Link
-                                to="/signup"
-                                style={{ color: '#B85C4E', textDecoration: 'none', fontWeight: 600 }}
-                            >
-                                Sign Up
-                            </Link>
-                        </Typography>
-                    </Box>
-                </Paper>
-            </Container>
-        </Box>
+                    <div className="login-signup-link">
+                        <p>
+                            Don't have an account?
+                            <Link to="/signup">Sign Up now</Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

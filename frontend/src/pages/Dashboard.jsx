@@ -24,6 +24,11 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [tabValue, setTabValue] = useState(0);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    const handleToggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -94,10 +99,17 @@ const Dashboard = () => {
 
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-            <Sidebar />
+            <Sidebar open={sidebarOpen} />
 
-            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <TopBar />
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    minWidth: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <TopBar onToggleSidebar={handleToggleSidebar} />
 
                 <Box sx={{ flexGrow: 1, p: 4 }}>
                     {/* Page Header */}
@@ -107,8 +119,9 @@ const Dashboard = () => {
                                 variant="h4"
                                 sx={{
                                     fontWeight: 700,
-                                    color: 'var(--text-primary)',
+                                    color: '#1a1a1a',
                                     mb: 1,
+                                    fontSize: '26px',
                                 }}
                             >
                                 Your Warranties
@@ -116,7 +129,8 @@ const Dashboard = () => {
                             <Typography
                                 variant="body1"
                                 sx={{
-                                    color: 'var(--text-secondary)',
+                                    color: '#888',
+                                    fontSize: '14px',
                                 }}
                             >
                                 Manage and track protection for all your assets in one place.
@@ -127,15 +141,16 @@ const Dashboard = () => {
                             startIcon={<Add />}
                             onClick={() => setUploadDialogOpen(true)}
                             sx={{
-                                backgroundColor: 'var(--primary-terracotta)',
+                                backgroundColor: '#C0392B',
                                 color: 'white',
                                 px: 3,
                                 py: 1.5,
-                                borderRadius: 'var(--border-radius-sm)',
-                                fontWeight: 600,
+                                borderRadius: '50px',
+                                fontWeight: 700,
                                 boxShadow: 'var(--shadow-sm)',
+                                textTransform: 'none',
                                 '&:hover': {
-                                    backgroundColor: 'var(--primary-terracotta-hover)',
+                                    backgroundColor: '#A93226',
                                     boxShadow: 'var(--shadow-md)',
                                 },
                             }}
@@ -153,14 +168,15 @@ const Dashboard = () => {
                                 '& .MuiTab-root': {
                                     textTransform: 'none',
                                     fontWeight: 500,
-                                    fontSize: '0.9375rem',
-                                    color: 'var(--text-secondary)',
+                                    fontSize: '0.875rem',
+                                    color: '#999',
                                     '&.Mui-selected': {
-                                        color: 'var(--primary-terracotta)',
+                                        color: '#E8420A',
+                                        fontWeight: 700,
                                     },
                                 },
                                 '& .MuiTabs-indicator': {
-                                    backgroundColor: 'var(--primary-terracotta)',
+                                    backgroundColor: '#E8420A',
                                     height: 3,
                                     borderRadius: '3px 3px 0 0',
                                 },
@@ -203,7 +219,7 @@ const Dashboard = () => {
                     {/* Warranty Cards */}
                     {loading ? (
                         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-                            <CircularProgress sx={{ color: 'var(--primary-terracotta)' }} />
+                            <CircularProgress sx={{ color: '#E8420A' }} />
                         </Box>
                     ) : (
                         <Grid container spacing={3}>
@@ -231,9 +247,11 @@ const Dashboard = () => {
                                                 startIcon={<Add />}
                                                 onClick={() => setUploadDialogOpen(true)}
                                                 sx={{
-                                                    backgroundColor: 'var(--primary-terracotta)',
+                                                    backgroundColor: '#C0392B',
+                                                    borderRadius: '50px',
+                                                    fontWeight: 700,
                                                     '&:hover': {
-                                                        backgroundColor: 'var(--primary-terracotta-hover)',
+                                                        backgroundColor: '#A93226',
                                                     },
                                                 }}
                                             >

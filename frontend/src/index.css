@@ -1,22 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Tesseract Color Palette */
-  --primary-terracotta: #B85C4E;
-  --primary-terracotta-hover: #A04D40;
-  --primary-terracotta-light: #D87B6E;
-  
-  --background-beige: #F5F2EE;
-  --sidebar-gray: #EFEBE7;
+  /* Primary Color Palette */
+  --primary-terracotta: #E8420A;
+  --primary-terracotta-hover: #A93226;
+  --primary-terracotta-light: #FDF0EB;
+
+  /* Button Colors */
+  --btn-primary: #C0392B;
+  --btn-primary-hover: #A93226;
+
+  /* Backgrounds */
+  --background-beige: #F5F0EB;
+  --sidebar-bg: #FFFFFF;
   --card-white: #FFFFFF;
-  
-  --text-primary: #1A1A1A;
-  --text-secondary: #6B6B6B;
-  --text-tertiary: #9E9E9E;
-  
-  --border-color: #E0DDD9;
+
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #888;
+  --text-tertiary: #999;
+
+  /* Border & Divider */
+  --border-color: #EEEBE7;
   --divider-color: #EEEBE7;
-  
+
   /* Status Colors */
   --status-active: #4CAF50;
   --status-active-bg: #E8F5E9;
@@ -24,22 +31,23 @@
   --status-warning-bg: #FFF3E0;
   --status-error: #F44336;
   --status-error-bg: #FFEBEE;
-  
+
   /* Design Tokens */
   --border-radius-sm: 8px;
   --border-radius-md: 12px;
   --border-radius-lg: 16px;
-  
+  --border-radius-pill: 50px;
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
-  
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
-  
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+
   --sidebar-width: 220px;
   --topbar-height: 64px;
 }
@@ -70,7 +78,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--sidebar-gray);
+  background: #f5f5f5;
 }
 
 ::-webkit-scrollbar-thumb {

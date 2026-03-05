@@ -1,19 +1,18 @@
 import { createTheme } from '@mui/material/styles';
 
-// Tesseract Design Theme
 const theme = createTheme({
     palette: {
         mode: 'light',
         primary: {
-            main: '#B85C4E',
-            light: '#D87B6E',
-            dark: '#A04D40',
+            main: '#E8420A',
+            light: '#FDF0EB',
+            dark: '#C0392B',
             contrastText: '#FFFFFF',
         },
         secondary: {
-            main: '#6B6B6B',
-            light: '#9E9E9E',
-            dark: '#4A4A4A',
+            main: '#888888',
+            light: '#AAAAAA',
+            dark: '#666666',
             contrastText: '#FFFFFF',
         },
         success: {
@@ -35,13 +34,13 @@ const theme = createTheme({
             contrastText: '#FFFFFF',
         },
         background: {
-            default: '#F5F2EE',
+            default: '#F5F0EB',
             paper: '#FFFFFF',
         },
         text: {
-            primary: '#1A1A1A',
-            secondary: '#6B6B6B',
-            disabled: '#9E9E9E',
+            primary: '#1a1a1a',
+            secondary: '#888888',
+            disabled: '#999999',
         },
         divider: '#EEEBE7',
     },
@@ -60,8 +59,8 @@ const theme = createTheme({
             fontSize: '1.75rem',
         },
         h4: {
-            fontWeight: 600,
-            fontSize: '1.5rem',
+            fontWeight: 700,
+            fontSize: '1.625rem',
         },
         h5: {
             fontWeight: 600,
@@ -80,7 +79,7 @@ const theme = createTheme({
             fontWeight: 500,
         },
         body1: {
-            fontSize: '1rem',
+            fontSize: '0.875rem',
             fontWeight: 400,
         },
         body2: {
@@ -89,7 +88,7 @@ const theme = createTheme({
         },
         button: {
             textTransform: 'none',
-            fontWeight: 500,
+            fontWeight: 600,
         },
     },
     shape: {
@@ -97,23 +96,23 @@ const theme = createTheme({
     },
     shadows: [
         'none',
-        '0 1px 3px rgba(0, 0, 0, 0.08)',
-        '0 2px 4px rgba(0, 0, 0, 0.08)',
-        '0 4px 6px rgba(0, 0, 0, 0.1)',
-        '0 8px 16px rgba(0, 0, 0, 0.12)',
-        '0 12px 24px rgba(0, 0, 0, 0.14)',
-        '0 16px 32px rgba(0, 0, 0, 0.16)',
-        '0 20px 40px rgba(0, 0, 0, 0.18)',
-        '0 24px 48px rgba(0, 0, 0, 0.2)',
-        ...Array(15).fill('0 24px 48px rgba(0, 0, 0, 0.2)'),
+        '0 1px 3px rgba(0, 0, 0, 0.06)',
+        '0 2px 4px rgba(0, 0, 0, 0.06)',
+        '0 4px 6px rgba(0, 0, 0, 0.08)',
+        '0 8px 16px rgba(0, 0, 0, 0.1)',
+        '0 12px 24px rgba(0, 0, 0, 0.12)',
+        '0 16px 32px rgba(0, 0, 0, 0.14)',
+        '0 20px 40px rgba(0, 0, 0, 0.16)',
+        '0 24px 48px rgba(0, 0, 0, 0.18)',
+        ...Array(15).fill('0 24px 48px rgba(0, 0, 0, 0.18)'),
     ],
     components: {
         MuiButton: {
             styleOverrides: {
                 root: {
-                    borderRadius: '8px',
-                    padding: '10px 20px',
-                    fontWeight: 500,
+                    borderRadius: '50px',
+                    padding: '10px 24px',
+                    fontWeight: 600,
                 },
                 contained: {
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
@@ -132,10 +131,10 @@ const theme = createTheme({
         MuiCard: {
             styleOverrides: {
                 root: {
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+                    borderRadius: '16px',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
                     '&:hover': {
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.12)',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     },
                 },
             },
@@ -155,7 +154,7 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     '& .MuiOutlinedInput-root': {
-                        borderRadius: '8px',
+                        borderRadius: '50px',
                     },
                 },
             },
@@ -165,7 +164,7 @@ const theme = createTheme({
                 root: {
                     textTransform: 'none',
                     fontWeight: 500,
-                    fontSize: '0.9375rem',
+                    fontSize: '0.875rem',
                 },
             },
         },

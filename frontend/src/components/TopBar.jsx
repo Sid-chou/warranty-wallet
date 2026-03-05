@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, TextField, IconButton, Avatar, Typography, InputAdornment } from '@mui/material';
-import { Search, Notifications } from '@mui/icons-material';
+import { Search, Notifications, Menu as MenuIcon } from '@mui/icons-material';
 
-const TopBar = () => {
+const TopBar = ({ onToggleSidebar }) => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
     return (
@@ -17,9 +17,22 @@ const TopBar = () => {
                 py: 2,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 3,
+                gap: 2,
             }}
         >
+            {/* Sidebar Toggle Button */}
+            <IconButton
+                onClick={onToggleSidebar}
+                sx={{
+                    color: 'var(--text-primary)',
+                    '&:hover': {
+                        backgroundColor: 'rgba(232, 66, 10, 0.06)',
+                    },
+                }}
+            >
+                <MenuIcon />
+            </IconButton>
+
             {/* Search Bar */}
             <TextField
                 placeholder="Search warranties, products, or brands..."
@@ -29,13 +42,17 @@ const TopBar = () => {
                     flexGrow: 1,
                     maxWidth: 600,
                     '& .MuiOutlinedInput-root': {
-                        backgroundColor: 'white',
-                        borderRadius: '8px',
+                        backgroundColor: '#F0F0F0',
+                        borderRadius: '50px',
                         '& fieldset': {
-                            borderColor: 'var(--border-color)',
+                            borderColor: '#D1D5DB',
+                            borderWidth: '1px',
                         },
                         '&:hover fieldset': {
-                            borderColor: 'var(--text-secondary)',
+                            borderColor: '#9CA3AF',
+                        },
+                        '&.Mui-focused fieldset': {
+                            border: '2px solid #E8420A',
                         },
                     },
                 }}
@@ -55,7 +72,7 @@ const TopBar = () => {
                 sx={{
                     color: 'var(--text-secondary)',
                     '&:hover': {
-                        backgroundColor: 'rgba(184, 92, 78, 0.08)',
+                        backgroundColor: 'rgba(232, 66, 10, 0.06)',
                     },
                 }}
             >
@@ -89,7 +106,7 @@ const TopBar = () => {
                     sx={{
                         width: 40,
                         height: 40,
-                        backgroundColor: 'var(--primary-terracotta)',
+                        backgroundColor: '#E8420A',
                         fontWeight: 600,
                     }}
                 >

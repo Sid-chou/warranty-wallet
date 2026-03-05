@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
 import { TrendingUp, Assignment, PieChart } from '@mui/icons-material';
 import Sidebar from '../components/Sidebar';
@@ -6,18 +6,31 @@ import TopBar from '../components/TopBar';
 import StatsCard from '../components/StatsCard';
 
 const Reports = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    const handleToggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
+
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-            <Sidebar />
+            <Sidebar open={sidebarOpen} />
 
-            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <TopBar />
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    minWidth: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <TopBar onToggleSidebar={handleToggleSidebar} />
 
                 <Box sx={{ flexGrow: 1, p: 4 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'var(--text-primary)', mb: 1 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: '#1a1a1a', mb: 1, fontSize: '26px' }}>
                         Reports & Analytics
                     </Typography>
-                    <Typography variant="body1" sx={{ color: 'var(--text-secondary)', mb: 4 }}>
+                    <Typography variant="body1" sx={{ color: '#888', fontSize: '14px', mb: 4 }}>
                         Insights and analytics for your warranties
                     </Typography>
 
@@ -27,7 +40,7 @@ const Reports = () => {
                                 icon={TrendingUp}
                                 label="Average Warranty Period"
                                 value="18 months"
-                                iconBgColor="var(--primary-terracotta)"
+                                iconBgColor="#E8420A"
                             />
                         </Grid>
                         <Grid item xs={12} md={4}>

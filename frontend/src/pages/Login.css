@@ -157,7 +157,7 @@
   transform: scale(1.03) rotate(var(--card-rotate, 0deg)) !important;
 }
 
-/* Main Chart Card */
+/*  Card */
 .login-card-chart {
   position: absolute;
   left: 50%;

@@ -18,9 +18,12 @@ import {
     Analytics,
     Settings as SettingsIcon,
     Logout,
+    Shield,
 } from '@mui/icons-material';
 
-const Sidebar = () => {
+const SIDEBAR_WIDTH = 220;
+
+const Sidebar = ({ open = true }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -46,37 +49,26 @@ const Sidebar = () => {
 
     return (
         <Drawer
-            variant="permanent"
+            variant="persistent"
+            anchor="left"
+            open={open}
             sx={{
-                width: 'var(--sidebar-width)',
+                width: open ? SIDEBAR_WIDTH : 0,
                 flexShrink: 0,
+                transition: 'width 0.3s ease',
                 '& .MuiDrawer-paper': {
-                    width: 'var(--sidebar-width)',
+                    width: SIDEBAR_WIDTH,
                     boxSizing: 'border-box',
-                    backgroundColor: 'var(--sidebar-gray)',
+                    backgroundColor: '#FFFFFF',
                     borderRight: '1px solid var(--border-color)',
+                    transition: 'transform 0.3s ease',
                 },
             }}
         >
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 {/* Logo Section */}
                 <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box
-                        sx={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--primary-terracotta)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            fontWeight: 700,
-                            fontSize: '1.25rem',
-                        }}
-                    >
-                        W
-                    </Box>
+                    <Shield sx={{ color: '#E8420A', fontSize: 28 }} />
                     <Typography
                         variant="h6"
                         sx={{
@@ -96,15 +88,17 @@ const Sidebar = () => {
                             <ListItemButton
                                 onClick={() => navigate(item.path)}
                                 sx={{
-                                    borderRadius: '8px',
+                                    borderRadius: '50px',
                                     backgroundColor: isActive(item.path)
-                                        ? 'rgba(184, 92, 78, 0.1)'
+                                        ? '#FDF0EB'
                                         : 'transparent',
                                     color: isActive(item.path)
-                                        ? 'var(--primary-terracotta)'
+                                        ? '#E8420A'
                                         : 'var(--text-secondary)',
                                     '&:hover': {
-                                        backgroundColor: 'rgba(184, 92, 78, 0.08)',
+                                        backgroundColor: isActive(item.path)
+                                            ? '#FDF0EB'
+                                            : 'rgba(232, 66, 10, 0.04)',
                                     },
                                     py: 1.25,
                                 }}
@@ -112,7 +106,7 @@ const Sidebar = () => {
                                 <ListItemIcon
                                     sx={{
                                         color: isActive(item.path)
-                                            ? 'var(--primary-terracotta)'
+                                            ? '#E8420A'
                                             : 'var(--text-secondary)',
                                         minWidth: 40,
                                     }}
@@ -122,7 +116,7 @@ const Sidebar = () => {
                                 <ListItemText
                                     primary={item.text}
                                     primaryTypographyProps={{
-                                        fontSize: '0.9375rem',
+                                        fontSize: '0.875rem',
                                         fontWeight: isActive(item.path) ? 600 : 500,
                                     }}
                                 />
@@ -135,10 +129,10 @@ const Sidebar = () => {
                         <ListItemButton
                             onClick={handleLogout}
                             sx={{
-                                borderRadius: '8px',
+                                borderRadius: '50px',
                                 color: 'var(--text-secondary)',
                                 '&:hover': {
-                                    backgroundColor: 'rgba(184, 92, 78, 0.08)',
+                                    backgroundColor: 'rgba(232, 66, 10, 0.04)',
                                 },
                                 py: 1.25,
                             }}
@@ -154,7 +148,7 @@ const Sidebar = () => {
                             <ListItemText
                                 primary="Logout"
                                 primaryTypographyProps={{
-                                    fontSize: '0.9375rem',
+                                    fontSize: '0.875rem',
                                     fontWeight: 500,
                                 }}
                             />
@@ -163,7 +157,7 @@ const Sidebar = () => {
                 </List>
 
                 {/* Storage Usage */}
-                <Box sx={{ p: 2, m: 2, backgroundColor: 'rgba(0,0,0,0.03)', borderRadius: 2 }}>
+                <Box sx={{ p: 2, m: 2, backgroundColor: '#FAFAFA', borderRadius: 2 }}>
                     <Typography
                         variant="caption"
                         sx={{
@@ -183,9 +177,9 @@ const Sidebar = () => {
                             my: 1,
                             height: 6,
                             borderRadius: 3,
-                            backgroundColor: 'rgba(184, 92, 78, 0.1)',
+                            backgroundColor: 'rgba(232, 66, 10, 0.1)',
                             '& .MuiLinearProgress-bar': {
-                                backgroundColor: 'var(--primary-terracotta)',
+                                backgroundColor: '#E8420A',
                                 borderRadius: 3,
                             },
                         }}

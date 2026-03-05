@@ -114,7 +114,7 @@ const WarrantyCard = ({ warranty, onDelete }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 boxShadow: 'var(--shadow-sm)',
-                borderRadius: 'var(--border-radius-md)',
+                borderRadius: '16px',
                 transition: 'all 0.2s',
                 position: 'relative',
                 '&:hover': {
@@ -242,7 +242,7 @@ const WarrantyCard = ({ warranty, onDelete }) => {
                     sx={{
                         color: 'var(--text-secondary)',
                         borderColor: 'var(--border-color)',
-                        borderRadius: 'var(--border-radius-sm)',
+                        borderRadius: '50px',
                         fontWeight: 600,
                         '&:hover': {
                             borderColor: 'var(--text-secondary)',
@@ -256,12 +256,12 @@ const WarrantyCard = ({ warranty, onDelete }) => {
                     variant="contained"
                     fullWidth
                     sx={{
-                        backgroundColor: 'var(--primary-terracotta)',
-                        borderRadius: 'var(--border-radius-sm)',
-                        fontWeight: 600,
+                        backgroundColor: '#C0392B',
+                        borderRadius: '50px',
+                        fontWeight: 700,
                         boxShadow: 'var(--shadow-sm)',
                         '&:hover': {
-                            backgroundColor: 'var(--primary-terracotta-hover)',
+                            backgroundColor: '#A93226',
                             boxShadow: 'var(--shadow-md)',
                         },
                     }}

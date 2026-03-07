@@ -46,7 +46,7 @@ const TopBar = ({ onToggleSidebar }) => {
                         borderRadius: '50px',
                         '& fieldset': {
                             borderColor: '#D1D5DB',
-                            borderWidth: '1px',
+                            borderWidth: '2px',
                         },
                         '&:hover fieldset': {
                             borderColor: '#9CA3AF',

@@ -29,10 +29,15 @@ public class User {
 
     private Set<String> roles = new HashSet<>();
 
+    private boolean notificationsEnabled = true;
+
+    private String notificationEmail;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.notificationEmail = email; // Default to login email
         this.roles.add("ROLE_USER");
     }
 }

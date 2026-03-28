@@ -19,4 +19,6 @@ public interface WarrantyRepository extends MongoRepository<Warranty, String> {
     List<Warranty> findByUserIdAndExpiryDateAfter(String userId, LocalDate date);
 
     List<Warranty> findByUserIdOrderByExpiryDateAsc(String userId);
+
+    List<Warranty> findByExpiryDate(LocalDate date);
 }

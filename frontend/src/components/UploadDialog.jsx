@@ -89,7 +89,7 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography component="span" variant="h6" fontWeight="bold">
                     Scan Bill for Warranty
                 </Typography>
             </DialogTitle>

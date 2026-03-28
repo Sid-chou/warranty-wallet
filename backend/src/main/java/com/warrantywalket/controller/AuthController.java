@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -111,6 +112,11 @@ public class AuthController {
                     user.getId(),
                     user.getUsername(),
                     user.getEmail()));
+        } catch (AuthenticationException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Invalid username or password");
+            error.put("type", e.getClass().getSimpleName());
+            return ResponseEntity.status(401).body(error);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Login failed: " + e.getMessage());

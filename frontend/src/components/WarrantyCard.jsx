@@ -14,7 +14,10 @@ import {
     Headphones,
     Watch,
     Article,
+    PictureAsPdf,
+    Download,
 } from '@mui/icons-material';
+import { exportWarrantyPDF } from '../services/pdfService';
 
 const WarrantyCard = ({ warranty, onDelete }) => {
     const [countdown, setCountdown] = useState('');
@@ -251,6 +254,24 @@ const WarrantyCard = ({ warranty, onDelete }) => {
                     }}
                 >
                     View Details
+                </Button>
+                <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => exportWarrantyPDF(warranty)}
+                    startIcon={<PictureAsPdf />}
+                    sx={{
+                        color: '#C0392B',
+                        borderColor: '#C0392B',
+                        borderRadius: '50px',
+                        fontWeight: 600,
+                        '&:hover': {
+                            borderColor: '#A93226',
+                            backgroundColor: 'rgba(192, 57, 43, 0.05)',
+                        },
+                    }}
+                >
+                    PDF
                 </Button>
                 <Button
                     variant="contained"

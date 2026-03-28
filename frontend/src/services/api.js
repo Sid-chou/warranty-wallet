@@ -25,9 +25,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 || error.response?.status === 403) {
             localStorage.removeItem('user');
-            window.location.href = '/login';
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
@@ -38,6 +40,7 @@ export const authAPI = {
     signup: (data) => api.post('/auth/signup', data),
     login: (data) => api.post('/auth/login', data),
 };
+
 // Warranty APIs
 export const warrantyAPI = {
     scanBill: (file) => {
@@ -49,6 +52,12 @@ export const warrantyAPI = {
     getActiveWarranties: () => api.get('/warranties/active'),
     getExpiredWarranties: () => api.get('/warranties/expired'),
     deleteWarranty: (id) => api.delete(`/warranties/${id}`),
+};
+
+// User APIs
+export const userAPI = {
+    getSettings: () => api.get('/user/settings'),
+    updateSettings: (data) => api.put('/user/settings', data),
 };
 
 export default api;

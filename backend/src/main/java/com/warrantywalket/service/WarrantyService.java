@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,30 +27,15 @@ public class WarrantyService {
     @Autowired
     private OcrService ocrService;
 
-    private String getUploadDir() {
-        // Use absolute path in user's warranty-wallet directory
-        String projectDir = System.getProperty("user.dir");
-        // Go up one level from backend to warranty-wallet root
-        Path uploadPath = Paths.get(projectDir).getParent().resolve("uploads");
-        return uploadPath.toString();
-    }
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public WarrantyResponse scanAndSaveBill(MultipartFile file, String userId) throws IOException {
-        // Save uploaded file
-        String originalFilename = file.getOriginalFilename();
-        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
+        // Extract bill details using Gemini OCR
+        Map<String, String> extractedData = ocrService.extractBillDetails(file);
 
-        Path uploadPath = Paths.get(getUploadDir());
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        Path filePath = uploadPath.resolve(uniqueFilename);
-        file.transferTo(filePath.toFile());
-
-        // Extract bill details using OCR
-        Map<String, String> extractedData = ocrService.extractBillDetails(filePath.toString());
+        // Upload to Cloudinary
+        String imageUrl = cloudinaryService.uploadImage(file);
 
         // Create warranty entity
         Warranty warranty = new Warranty(userId);
@@ -65,7 +47,7 @@ public class WarrantyService {
         warranty.setPaymentMethod(extractedData.get("payment_method"));
         warranty.setMerchantName(extractedData.get("merchant_name"));
         warranty.setProductName(extractedData.get("product_name"));
-        warranty.setImagePath(filePath.toString());
+        warranty.setImagePath(imageUrl);
 
         // Parse and set invoice date
         String invoiceDateStr = extractedData.get("invoice_date");
@@ -114,11 +96,16 @@ public class WarrantyService {
             throw new RuntimeException("Unauthorized to delete this warranty");
         }
 
-        // Delete image file
+        // Delete image from Cloudinary
         try {
-            Files.deleteIfExists(Paths.get(warranty.getImagePath()));
-        } catch (IOException e) {
-            // Log error but continue with deletion
+            if (warranty.getImagePath() != null && warranty.getImagePath().startsWith("http")) {
+                cloudinaryService.deleteImage(warranty.getImagePath());
+            } else if (warranty.getImagePath() != null) {
+                // Fallback for old local files if any exist
+                Files.deleteIfExists(Paths.get(warranty.getImagePath()));
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to delete image: " + e.getMessage());
         }
 
         warrantyRepository.delete(warranty);

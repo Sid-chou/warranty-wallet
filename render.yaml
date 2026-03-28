@@ -8,7 +8,13 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
-      - key: SPRING_PROFILES_ACTIVE
-        value: prod
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SMTP_EMAIL
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
       - key: ALLOWED_ORIGINS
         sync: false

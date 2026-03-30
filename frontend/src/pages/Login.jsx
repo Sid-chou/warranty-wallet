@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import './Login.css';
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -12,6 +13,28 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [oauthProviders, setOauthProviders] = useState([]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const oauthError = params.get('error');
+        if (oauthError) {
+            setError(oauthError);
+        }
+    }, [location.search]);
+
+    useEffect(() => {
+        const loadOAuthProviders = async () => {
+            try {
+                const response = await authAPI.getOAuthProviders();
+                setOauthProviders(Array.isArray(response.data) ? response.data : []);
+            } catch (err) {
+                setOauthProviders([]);
+            }
+        };
+
+        loadOAuthProviders();
+    }, []);
 
     const handleChange = (e) => {
         setFormData({
@@ -35,6 +58,34 @@ const Login = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleOAuthLogin = (providerId) => {
+        window.location.href = authAPI.getOAuthAuthorizationUrl(providerId);
+    };
+
+    const getProviderLabel = (providerId, providerName) => {
+        if (providerId === 'google') {
+            return 'Continue with Google';
+        }
+
+        if (providerId === 'github') {
+            return 'Continue with GitHub';
+        }
+
+        return `Continue with ${providerName}`;
+    };
+
+    const getProviderIcon = (providerId) => {
+        if (providerId === 'google') {
+            return 'public';
+        }
+
+        if (providerId === 'github') {
+            return 'code';
+        }
+
+        return 'login';
     };
 
     return (
@@ -241,6 +292,30 @@ const Login = () => {
                             {loading ? 'Signing in...' : 'Sign in'}
                         </button>
                     </form>
+
+                    {oauthProviders.length > 0 && (
+                        <div className="login-oauth-section">
+                            <div className="login-divider">
+                                <span>or sign in with</span>
+                            </div>
+
+                            <div className="login-oauth-buttons">
+                                {oauthProviders.map((provider) => (
+                                    <button
+                                        key={provider.id}
+                                        type="button"
+                                        className="login-oauth-btn"
+                                        onClick={() => handleOAuthLogin(provider.id)}
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            {getProviderIcon(provider.id)}
+                                        </span>
+                                        {getProviderLabel(provider.id, provider.name)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="login-signup-link">
                         <p>

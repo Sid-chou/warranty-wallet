@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import Login from './pages/Login';
+import OAuthCallback from './pages/OAuthCallback';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Categories from './pages/Categories';
@@ -17,6 +18,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route path="/signup" element={<Signup />} />
           <Route
             path="/dashboard"

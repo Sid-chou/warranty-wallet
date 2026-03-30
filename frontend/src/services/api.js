@@ -2,6 +2,7 @@ import axios from 'axios';
 
 // Use environment variable for deployed backend, fallback to localhost for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+export const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '');
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -39,6 +40,8 @@ api.interceptors.response.use(
 export const authAPI = {
     signup: (data) => api.post('/auth/signup', data),
     login: (data) => api.post('/auth/login', data),
+    getOAuthProviders: () => api.get('/auth/oauth/providers'),
+    getOAuthAuthorizationUrl: (provider) => `${BACKEND_BASE_URL}/oauth2/authorization/${provider}`,
 };
 
 // Warranty APIs

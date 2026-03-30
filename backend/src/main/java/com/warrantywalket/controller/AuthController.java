@@ -8,6 +8,7 @@ import com.warrantywalket.repository.UserRepository;
 import com.warrantywalket.security.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,9 +16,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,6 +49,9 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositoryProvider;
+
     @GetMapping("/dbtest")
     public ResponseEntity<?> testDb() {
         Map<String, Object> response = new HashMap<>();
@@ -57,6 +65,25 @@ public class AuthController {
             response.put("error", e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
+    }
+
+    @GetMapping("/oauth/providers")
+    public ResponseEntity<?> getOAuthProviders() {
+        ClientRegistrationRepository repository = clientRegistrationRepositoryProvider.getIfAvailable();
+        List<Map<String, String>> providers = new ArrayList<>();
+
+        if (repository instanceof Iterable<?> registrations) {
+            for (Object registrationObj : registrations) {
+                ClientRegistration registration = (ClientRegistration) registrationObj;
+                Map<String, String> provider = new HashMap<>();
+                provider.put("id", registration.getRegistrationId());
+                provider.put("name", registration.getClientName());
+                provider.put("authorizationUrl", "/oauth2/authorization/" + registration.getRegistrationId());
+                providers.add(provider);
+            }
+        }
+
+        return ResponseEntity.ok(providers);
     }
 
     @PostMapping("/signup")

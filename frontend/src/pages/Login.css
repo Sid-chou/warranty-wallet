@@ -684,6 +684,76 @@
   transform: none;
 }
 
+/* OAuth Section */
+.login-oauth-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-divider {
+  position: relative;
+  text-align: center;
+}
+
+.login-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid #e5e7eb;
+  z-index: 0;
+}
+
+.login-divider span {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 0 12px;
+  background: #fff;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.login-oauth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-oauth-btn {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #fff7f3;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-oauth-btn:hover {
+  border-color: #fdba74;
+  background: #fff1e8;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(232, 66, 10, 0.12);
+}
+
+.login-oauth-btn .material-symbols-outlined {
+  font-size: 18px;
+  color: #E8420A;
+}
+
 /* Signup Link */
 .login-signup-link {
   text-align: center;

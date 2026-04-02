@@ -1,314 +1,174 @@
-# Warranty Wallet - Bill OCR & Warranty Management System
+# Warranty Wallet
 
-A full-stack web application that scans bills using OCR technology and automatically extracts warranty information, tracking expiry dates with real-time countdown timers.
+Warranty Wallet is a full-stack warranty management app that turns purchase bills into structured, searchable warranty records. Users upload a receipt image, the backend extracts warranty data with Gemini, stores the original bill in Cloudinary, calculates expiry dates, and surfaces everything in a React dashboard with reminders and PDF export.
 
-## 🌟 Features
+## Highlights
 
-- **📸 Bill Scanning**: Upload bill images and automatically extract warranty details using OCR
-- **⏱️ Real-time Countdown**: Live countdown timers showing time remaining until warranty expiry
-- **📊 Smart Dashboard**: View all warranties with filtering by status (Active, Expiring Soon, Expired)
-- **🔐 User Authentication**: Secure JWT-based authentication system
-- **💾 MongoDB Storage**: Store and manage all warranty data in MongoDB
-- **🎨 Modern UI**: Clean, professional interface built with Material-UI
-- **📱 Responsive Design**: Works seamlessly on desktop and mobile devices
+- Scan bill images and extract invoice date, invoice number, product name, serial number, model number, merchant, payment method, price, and warranty period
+- Calculate expiry dates automatically and classify records as `ACTIVE`, `EXPIRING_SOON`, or `EXPIRED`
+- Store original bill images in Cloudinary instead of relying on local files
+- Export a "Warranty Passport" PDF with structured data and the original bill image
+- Send scheduled email reminders 30, 7, and 1 day before warranty expiry
+- Support username/password login with optional Google and GitHub OAuth
+- Keep user preferences for notifications in a dedicated settings flow
 
-## 🛠️ Technology Stack
+## How It Works
 
-### Frontend
-- **React 18** with Vite
-- **Material-UI (MUI)** for professional components
-- **Axios** for API calls
-- **React Router** for navigation
-
-### Backend
-- **Spring Boot 3.2.0** (Java 17)
-- **Spring Security** with JWT authentication
-- **Spring Data MongoDB** for database operations
-- **Maven** for dependency management
-
-### OCR Service
-- **Python 3.x**
-- **Tesseract OCR** for text extraction
-- **Pillow (PIL)** for image processing
-
-### Database
-- **MongoDB** for storing user and warranty data
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Java 17+** (OpenJDK or Oracle JDK)
-- **Maven 3.6+**
-- **Node.js 18+** and npm
-- **Python 3.8+**
-- **MongoDB 5.0+** (running locally or remotely)
-- **Tesseract OCR** (Download from: https://github.com/tesseract-ocr/tesseract)
-
-### Installing Tesseract OCR
-
-**Windows:**
-1. Download installer from: https://github.com/UB-Mannheim/tesseract/wiki
-2. Run installer and note the installation path
-3. Add Tesseract to your PATH environment variable
-
-**macOS:**
-```bash
-brew install tesseract
+```text
+React + Vite frontend
+    ->
+Spring Boot API
+    -> Gemini 2.5 Flash for receipt extraction
+    -> MongoDB for users and warranties
+    -> Cloudinary for bill image storage
+    -> SMTP for scheduled email alerts
 ```
 
-**Linux:**
-```bash
-sudo apt-get install tesseract-ocr
+## Tech Stack
+
+| Layer | Tools |
+| --- | --- |
+| Frontend | React 19, Vite 7, Material UI 7, React Router 7, Axios |
+| Backend | Spring Boot 3.2, Java 17, Spring Security, JWT, OAuth2 Client |
+| Data | MongoDB |
+| AI and OCR | Gemini 2.5 Flash |
+| Storage | Cloudinary |
+| Documents | jsPDF, jspdf-autotable |
+| Alerts | Spring Mail, scheduled jobs |
+| Deployment | Docker, Render, Vercel |
+
+## Repository Layout
+
+```text
+warranty-wallet/
+|-- backend/                     Spring Boot API
+|   |-- src/main/java/com/warrantywalket/
+|   |   |-- config/              security and app configuration
+|   |   |-- controller/          REST endpoints
+|   |   |-- dto/                 request and response models
+|   |   |-- model/               MongoDB entities
+|   |   |-- repository/          data access
+|   |   |-- security/            JWT and OAuth2 handling
+|   |   `-- service/             OCR, alerts, Cloudinary, business logic
+|   `-- src/main/resources/
+|       `-- application.properties
+|-- frontend/                    React application
+|   |-- src/components/          layout, upload, and warranty cards
+|   |-- src/pages/               login, dashboard, settings, reports, categories
+|   `-- src/services/            API client and PDF export
+|-- Dockerfile                   backend container build
+|-- render.yaml                  backend deployment config
+|-- vercel.json                  frontend SPA routing config
+|-- ocr_service.py               legacy Tesseract prototype
+|-- ocring.py                    earlier OCR experiment
+`-- requirements.txt             Python dependencies for legacy OCR scripts
 ```
 
-## 🚀 Installation & Setup
+## Important Note About OCR
 
-### 1. Clone the Repository
+The active application flow does not use the root Python OCR script. The running backend uses [`backend/src/main/java/com/warrantywalket/service/OcrService.java`](backend/src/main/java/com/warrantywalket/service/OcrService.java) and sends receipt images to Gemini for structured extraction.
 
-```bash
-cd c:\Users\LENOVO\Desktop\mongo\warranty-wallet
+Files such as `ocr_service.py`, `ocring.py`, and `requirements.txt` are older prototype artifacts kept in the repository.
+
+## Local Development
+
+### Prerequisites
+
+- Java 17+
+- Maven 3.9+
+- Node.js current LTS, with Node 20+ recommended for the Vite toolchain
+- MongoDB instance, local or Atlas
+- Cloudinary account
+- Gemini API key
+- SMTP credentials if you want email reminders
+- Optional Google and GitHub OAuth app credentials
+
+### Backend Environment Variables
+
+Set these before starting the backend:
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `SPRING_DATA_MONGODB_URI` | Yes | MongoDB connection string |
+| `MONGODB_DATABASE` | No | Database name, defaults to `warranty_wallet` |
+| `JWT_SECRET` | Yes | Secret used to sign JWTs |
+| `JWT_EXPIRATION` | No | Token lifetime in milliseconds, defaults to `86400000` |
+| `CLOUDINARY_URL` | Yes | Cloudinary connection URL |
+| `GEMINI_API_KEY` | Yes | Gemini API key for receipt extraction |
+| `ALLOWED_ORIGINS` | No | CORS origin list, defaults to `http://localhost:5173` |
+| `FRONTEND_URL` | No | Frontend base URL, defaults to `http://localhost:5173` |
+| `SMTP_EMAIL` | No | Sender email for alert notifications |
+| `SMTP_PASSWORD` | No | Sender app password for SMTP |
+| `GOOGLE_CLIENT_ID` | No | Enable Google OAuth |
+| `GOOGLE_CLIENT_SECRET` | No | Enable Google OAuth |
+| `GITHUB_CLIENT_ID` | No | Enable GitHub OAuth |
+| `GITHUB_CLIENT_SECRET` | No | Enable GitHub OAuth |
+| `PORT` | No | Backend port, defaults to `8080` |
+
+Example PowerShell session:
+
+```powershell
+$env:SPRING_DATA_MONGODB_URI="mongodb+srv://<user>:<password>@<cluster>/<db>"
+$env:JWT_SECRET="replace-this-with-a-long-random-secret"
+$env:CLOUDINARY_URL="cloudinary://<key>:<secret>@<cloud-name>"
+$env:GEMINI_API_KEY="<your-gemini-api-key>"
+$env:ALLOWED_ORIGINS="http://localhost:5173"
+$env:FRONTEND_URL="http://localhost:5173"
 ```
 
-### 2. Set Up Python OCR Service
+### Start The Backend
 
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Test OCR service (optional)
-python ocr_service.py path/to/test/image.png
-```
-
-### 3. Set Up Backend (Spring Boot)
-
-```bash
-cd backend
-
-# Install dependencies and build
-mvn clean install
-
-# Configure MongoDB connection
-# Edit src/main/resources/application.properties if needed
-```
-
-**Default Configuration:**
-- Server Port: `8080`
-- MongoDB URI: `mongodb://localhost:27017/warranty_wallet`
-- Python Path: `python` (adjust if needed)
-
-### 4. Set Up Frontend (React)
-
-```bash
-cd ../frontend
-
-# Install dependencies (already done)
-npm install
-
-# Start development server
-npm run dev
-```
-
-The frontend will run on: `http://localhost:5173`
-
-### 5. Start MongoDB
-
-Make sure MongoDB is running:
-
-```bash
-# Windows (if MongoDB is installed as a service)
-net start MongoDB
-
-# Or start manually
-mongod
-```
-
-### 6. Run the Application
-
-**Terminal 1 - Backend:**
-```bash
+```powershell
 cd backend
 mvn spring-boot:run
 ```
 
-**Terminal 2 - Frontend:**
-```bash
+The API starts on `http://localhost:8080` by default.
+
+### Start The Frontend
+
+Create `frontend/.env` if you want to point the UI at a custom backend:
+
+```env
+VITE_API_URL=http://localhost:8080/api
+```
+
+Then run:
+
+```powershell
 cd frontend
+npm install
 npm run dev
 ```
 
-## 📖 Usage Guide
+The frontend starts on `http://localhost:5173`.
 
-### 1. Create an Account
-- Navigate to `http://localhost:5173`
-- Click "Sign Up" and create your account
-- Login with your credentials
+## Core API Routes
 
-### 2. Scan Your First Bill
-- Click the "Scan Bill" button in the dashboard
-- Drag and drop a bill image or click to browse
-- The system will automatically extract warranty details
-- View the countdown timer and expiry date
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/auth/signup` | Register a new user |
+| `POST` | `/api/auth/login` | Authenticate and receive a JWT |
+| `GET` | `/api/auth/oauth/providers` | List enabled OAuth providers |
+| `POST` | `/api/warranties/scan` | Upload a bill image and create a warranty record |
+| `GET` | `/api/warranties` | Fetch all warranties for the authenticated user |
+| `GET` | `/api/warranties/active` | Fetch active and expiring warranties |
+| `GET` | `/api/warranties/expired` | Fetch expired warranties |
+| `DELETE` | `/api/warranties/{id}` | Delete a warranty and its stored bill image |
+| `GET` | `/api/user/settings` | Load notification settings |
+| `PUT` | `/api/user/settings` | Update notification preferences |
 
-### 3. Manage Warranties
-- Filter warranties by status using the tabs
-- Expand cards to view full details
-- Delete warranties you no longer need
-- Watch real-time countdown timers
+Protected routes require a bearer token except the public auth endpoints.
 
-## 🔧 Configuration
+## Deployment Notes
 
-### Backend Configuration
+- `Dockerfile` builds and runs the backend as a Spring Boot container.
+- `render.yaml` is prepared for deploying the backend on Render.
+- `vercel.json` rewrites all frontend routes to `index.html` so client-side routing works on Vercel.
+- Production deployments must provide the same environment variables listed above.
 
-Edit `backend/src/main/resources/application.properties`:
+## Current Scope
 
-```properties
-# MongoDB
-spring.data.mongodb.uri=mongodb://localhost:27017/warranty_wallet
+The end-to-end flow for authentication, bill upload, extraction, warranty storage, PDF export, and notification preferences is present in the codebase.
 
-# File Upload
-spring.servlet.multipart.max-file-size=10MB
-
-# Python OCR
-ocr.python.path=python
-ocr.script.path=../ocr_service.py
-
-# JWT Secret (change in production!)
-jwt.secret=your-secret-key-here
-jwt.expiration=86400000
-```
-
-### Frontend Configuration
-
-Edit `frontend/src/services/api.js`:
-
-```javascript
-const API_BASE_URL = 'http://localhost:8080/api';
-```
-
-## 📁 Project Structure
-
-```
-warranty-wallet/
-├── backend/                    # Spring Boot backend
-│   ├── src/main/java/com/warrantywalket/
-│   │   ├── config/            # Security & CORS config
-│   │   ├── controller/        # REST controllers
-│   │   ├── dto/               # Data transfer objects
-│   │   ├── model/             # MongoDB entities
-│   │   ├── repository/        # MongoDB repositories
-│   │   ├── security/          # JWT & authentication
-│   │   └── service/           # Business logic
-│   └── pom.xml                # Maven dependencies
-├── frontend/                   # React frontend
-│   ├── src/
-│   │   ├── components/        # Reusable components
-│   │   ├── pages/             # Page components
-│   │   ├── services/          # API services
-│   │   └── App.jsx            # Main app component
-│   └── package.json           # npm dependencies
-├── ocr_service.py             # Python OCR script
-├── ocring.py                  # Original OCR script
-└── requirements.txt           # Python dependencies
-```
-
-## 🎨 Features Showcase
-
-### Warranty Expiry Countdown
-- **Green (Active)**: More than 30 days remaining
-- **Yellow (Expiring Soon)**: 7-30 days remaining  
-- **Red (Expired)**: Less than 7 days or expired
-
-### OCR Extraction
-The system automatically extracts:
-- Invoice/Bill Number
-- Invoice Date
-- Product Name
-- Serial Number
-- Model Number
-- Price/Amount
-- Warranty Period
-- Merchant/Store Name
-- Payment Method
-
-## 🐛 Troubleshooting
-
-### OCR Not Working
-- Ensure Tesseract is installed and in PATH
-- Check Python path in `application.properties`
-- Verify Python dependencies are installed
-
-### MongoDB Connection Failed
-- Ensure MongoDB is running
-- Check connection URI in `application.properties`
-- Create database manually if needed
-
-### CORS Errors
-- Check CORS configuration in `SecurityConfig.java`
-- Verify frontend URL matches allowed origins
-
-### JWT Token Errors
-- Clear browser localStorage
-- Re-login to get a new token
-
-## 📝 API Documentation
-
-### Authentication Endpoints
-
-**POST** `/api/auth/signup`
-- Register new user
-- Body: `{ username, email, password }`
-
-**POST** `/api/auth/login`
-- Login and get JWT token
-- Body: `{ username, password }`
-
-### Warranty Endpoints (Authenticated)
-
-**POST** `/api/warranties/scan`
-- Upload and scan bill
-- Body: FormData with `file`
-
-**GET** `/api/warranties`
-- Get all user warranties
-
-**GET** `/api/warranties/active`
-- Get active warranties only
-
-**GET** `/api/warranties/expired`
-- Get expired warranties only
-
-**DELETE** `/api/warranties/{id}`
-- Delete a warranty
-
-## 🔒 Security
-
-- Passwords are encrypted using BCrypt
-- JWT tokens for stateless authentication
-- CORS enabled for frontend origin only
-- File upload size limits enforced
-- Input validation on all endpoints
-
-## 🚀 Future Enhancements
-
-- [ ] Email notifications for expiring warranties
-- [ ] Export warranties to PDF
-- [ ] Multiple image formats support
-- [ ] OCR accuracy improvements
-- [ ] Mobile app version
-- [ ] Cloud deployment guide
-
-## 📄 License
-
-This project is created for educational purposes.
-
-## 👨‍💻 Author
-
-Created with ❤️ for warranty management
-
-## 🙏 Acknowledgments
-
-- Tesseract OCR for text extraction
-- Spring Boot for robust backend framework
-- Material-UI for beautiful components
-- MongoDB for flexible data storage
+The `Reports` and `Categories` pages exist, but they are currently lightweight UI placeholders rather than full analytics modules.

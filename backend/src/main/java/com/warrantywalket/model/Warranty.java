@@ -35,6 +35,7 @@ public class Warranty {
     private LocalDate expiryDate;
     private Long daysRemaining;
     private String status; // "ACTIVE", "EXPIRING_SOON", "EXPIRED"
+    private String category;
 
     // Image Storage
     private String imagePath;

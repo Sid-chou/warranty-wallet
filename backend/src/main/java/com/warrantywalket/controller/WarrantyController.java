@@ -83,4 +83,12 @@ public class WarrantyController {
             return ResponseEntity.badRequest().body(error);
         }
     }
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategoryStats(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        List<Map<String, Object>> stats = warrantyService.getCategoryStats(username);
+        return ResponseEntity.ok(stats);
+    }
 }

@@ -19,5 +19,6 @@ public class WarrantyResponse {
     private LocalDate expiryDate;
     private Long daysRemaining;
     private String status;
+    private String category;
     private String imagePath;
 }

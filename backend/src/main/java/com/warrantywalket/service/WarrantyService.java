@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +30,9 @@ public class WarrantyService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     public WarrantyResponse scanAndSaveBill(MultipartFile file, String userId) throws IOException {
         // Extract bill details using Gemini OCR
@@ -47,6 +51,7 @@ public class WarrantyService {
         warranty.setPaymentMethod(extractedData.get("payment_method"));
         warranty.setMerchantName(extractedData.get("merchant_name"));
         warranty.setProductName(extractedData.get("product_name"));
+        warranty.setCategory(categoryService.categorize(warranty.getProductName(), warranty.getMerchantName()));
         warranty.setImagePath(imageUrl);
 
         // Parse and set invoice date
@@ -67,8 +72,13 @@ public class WarrantyService {
     public List<WarrantyResponse> getUserWarranties(String userId) {
         List<Warranty> warranties = warrantyRepository.findByUserIdOrderByExpiryDateAsc(userId);
 
-        // Update status for all warranties
-        warranties.forEach(this::calculateWarrantyExpiry);
+        // Update status and backfill category for all warranties
+        warranties.forEach(w -> {
+            calculateWarrantyExpiry(w);
+            if (w.getCategory() == null || w.getCategory().isEmpty()) {
+                w.setCategory(categoryService.categorize(w.getProductName(), w.getMerchantName()));
+            }
+        });
         warrantyRepository.saveAll(warranties);
 
         return warranties.stream()
@@ -205,7 +215,26 @@ public class WarrantyService {
         response.setExpiryDate(warranty.getExpiryDate());
         response.setDaysRemaining(warranty.getDaysRemaining());
         response.setStatus(warranty.getStatus());
+        response.setCategory(warranty.getCategory());
         response.setImagePath(warranty.getImagePath());
         return response;
+    }
+
+    public List<Map<String, Object>> getCategoryStats(String userId) {
+        List<WarrantyResponse> warranties = getUserWarranties(userId);
+        Map<String, Long> counts = warranties.stream()
+                .collect(Collectors.groupingBy(
+                        w -> (w.getCategory() != null && !w.getCategory().isEmpty()) ? w.getCategory() : "Other",
+                        Collectors.counting()
+                ));
+        return counts.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .map(e -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("name", e.getKey());
+                    m.put("count", e.getValue());
+                    return m;
+                })
+                .collect(Collectors.toList());
     }
 }

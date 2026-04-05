@@ -1,16 +1,21 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import theme from './theme';
-import Login from './pages/Login';
-import OAuthCallback from './pages/OAuthCallback';
-import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
-import Categories from './pages/Categories';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import PrivateRoute from './components/PrivateRoute';
-
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import theme from "./theme";
+import Login from "./pages/Login";
+import OAuthCallback from "./pages/OAuthCallback";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import Categories from "./pages/Categories";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
+import PrivateRoute from "./components/PrivateRoute";
+import { Analytics } from "@vercel/analytics/react";
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -54,10 +59,10 @@ function App() {
           />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        <Analytics />
       </Router>
     </ThemeProvider>
   );
 }
 
 export default App;
-

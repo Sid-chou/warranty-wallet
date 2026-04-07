@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import googleIcon from '../assets/google.png';
+import logo1 from '../assets/logo1.png';
 import './Login.css';
 
 const Login = () => {
@@ -97,11 +98,22 @@ const Login = () => {
                 <div className="login-left-blur-2"></div>
 
                 {/* Brand */}
-                <div className="login-brand">
+                <div className="login-brand" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <div className="login-brand-icon">
-                        <span className="material-symbols-outlined" style={{ fontSize: 24 }}>shield</span>
+                        <img 
+                            src={logo1} 
+                            alt="Logo" 
+                            style={{ 
+                                width: 68, 
+                                height: 68, 
+                                objectFit: 'contain', 
+                                
+                            }} 
+                        />
                     </div>
-                    <span className="login-brand-name">Warranty Wallet</span>
+                    <span className="login-brand-name" style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '0.2px' }}>
+                        Warranty Wallet
+                    </span>
                 </div>
 
                 {/* Floating Cards */}
@@ -211,11 +223,22 @@ const Login = () => {
             {/* ===== Right Panel - Login Form ===== */}
             <div className="login-right-panel">
                 {/* Mobile Brand */}
-                <div className="login-mobile-brand">
+                <div className="login-mobile-brand" style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
                     <div className="login-mobile-brand-icon">
-                        <span className="material-symbols-outlined">shield</span>
+                        <img 
+                            src={logo1} 
+                            alt="Logo" 
+                            style={{ 
+                                width: 64, 
+                                height: 64, 
+                                objectFit: 'contain', 
+                                marginRight: '-8px' 
+                            }} 
+                        />
                     </div>
-                    <span className="login-mobile-brand-name">Warranty Wallet</span>
+                    <span className="login-mobile-brand-name" style={{ fontWeight: 800, fontSize: '1.1rem' }}>
+                        Warranty Wallet
+                    </span>
                 </div>
 
                 <div className="login-form-container">

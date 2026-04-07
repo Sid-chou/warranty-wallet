@@ -12,6 +12,7 @@ import {
     IconButton,
 } from '@mui/material';
 import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material';
+import logo1 from '../assets/logo1.png';
 import { authAPI } from '../services/api';
 
 const Signup = () => {
@@ -68,7 +69,7 @@ const Signup = () => {
                     }}
                 >
                     <Box sx={{ textAlign: 'center', mb: 3 }}>
-                        <PersonAdd sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
+                        <img src={logo1} alt="Logo" style={{ width: 64, height: 64, objectFit: 'contain', marginBottom: '16px' }} />
                         <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
                             Create Account
                         </Typography>

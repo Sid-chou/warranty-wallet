@@ -20,6 +20,7 @@ import {
     Logout,
     Shield,
 } from '@mui/icons-material';
+import logo1 from '../assets/logo1.png';
 
 const SIDEBAR_WIDTH = 220;
 
@@ -67,14 +68,25 @@ const Sidebar = ({ open = true }) => {
         >
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 {/* Logo Section */}
-                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Shield sx={{ color: '#E8420A', fontSize: 28 }} />
+                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <img 
+                        src={logo1} 
+                        alt="Logo" 
+                        style={{ 
+                            width: 78, 
+                            height: 78, 
+                            objectFit: 'contain', 
+                            marginRight: '-10px' // This "pulls" the text closer to the logo graphics
+                        }} 
+                    />
                     <Typography
                         variant="h6"
                         sx={{
-                            fontWeight: 700,
+                            fontWeight: 800,
                             color: 'var(--text-primary)',
-                            fontSize: '1.125rem',
+                            fontSize: '1.1rem',
+                            letterSpacing: '0.2px',
+                            lineHeight: 1.2
                         }}
                     >
                         Warranty Wallet

@@ -124,40 +124,45 @@ const Sidebar = ({ open = true }) => {
                         </ListItem>
                     ))}
 
-                    {/* Logout */}
-                    <ListItem disablePadding sx={{ mt: 1 }}>
-                        <ListItemButton
-                            onClick={handleLogout}
-                            sx={{
-                                borderRadius: '50px',
-                                color: 'var(--text-secondary)',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(232, 66, 10, 0.04)',
-                                },
-                                py: 1.25,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    color: 'var(--text-secondary)',
-                                    minWidth: 40,
-                                }}
-                            >
-                                <Logout />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Logout"
-                                primaryTypographyProps={{
-                                    fontSize: '0.875rem',
-                                    fontWeight: 500,
-                                }}
-                            />
-                        </ListItemButton>
-                    </ListItem>
                 </List>
 
+                {/* Bottom Section (Logout) */}
+                <Box sx={{ px: 2, pb: 2 }}>
+                    <List disablePadding>
+                        <ListItem disablePadding>
+                            <ListItemButton
+                                onClick={handleLogout}
+                                sx={{
+                                    borderRadius: '50px',
+                                    color: '#888',
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(220, 38, 38, 0.04)',
+                                    },
+                                    py: 1.25,
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        color: '#888',
+                                        minWidth: 40,
+                                    }}
+                                >
+                                    <Logout />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Logout"
+                                    primaryTypographyProps={{
+                                        fontSize: '0.875rem',
+                                        fontWeight: 600,
+                                    }}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </Box>
+
                 {/* Storage Usage */}
-                <Box sx={{ p: 2, m: 2, backgroundColor: '#FAFAFA', borderRadius: 2 }}>
+                {/* <Box sx={{ p: 2, m: 2, backgroundColor: '#FAFAFA', borderRadius: 2 }}>
                     <Typography
                         variant="caption"
                         sx={{
@@ -193,7 +198,7 @@ const Sidebar = ({ open = true }) => {
                     >
                         4.5GB of 10GB used
                     </Typography>
-                </Box>
+                </Box> */}
             </Box>
         </Drawer>
     );

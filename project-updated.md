@@ -14,9 +14,23 @@
 
 ---
 
-# Project Updates Tracker
+---
 
-This document tracks all major architectural changes, bug fixes, model replacements, and design decisions made to the Warranty Wallet app over time.
+## 📅 April 7, 2026 - Modern UI Enhancements & OAuth Refactoring
+
+**Design & UI Improvements:**
+*   **Sidebar Navigation Overhaul**: Relocated the **Logout** button to the bottom of the sidebar using `flexGrow: 1` as per modern dashboard standards.
+*   **Theming - Logout Action**: Updated the logout button with a clear red semantic color (`#dc2626`) and specialized hover states to differentiate it from primary navigation.
+*   **Premium Auth Assets**: Integrated a high-fidelity **Google PNG** for OAuth instead of the generic font icon, creating a much more polished and branded login experience.
+*   **Responsive Login Stylings**: Switched OAuth button backgrounds from tinted off-white to pure white, improving visual contrast on the login screen.
+
+**Major Technical & Logic Fixes:**
+*   **Dynamic Icon Engine**: Refactored the `Login.jsx` provider loop to handle both `image` and `icon` types, enabling future-proof integration of any branded provider image.
+*   **Vite Path Optimization**: Resolved a critical `loadAndTransform` error caused by an incorrect asset path for the Google PNG.
+*   **Application-Level OAuth Toggle**: Taught the user how to manage available login providers (like GitHub) via `application.properties` without needing to edit frontend source code.
+
+**Bug Fixes:**
+*   **JSX Hierarchy Repair**: Fixed a syntax error in `Sidebar.jsx` where a missing `</Box>` closure was breaking the React component tree.
 
 ---
 

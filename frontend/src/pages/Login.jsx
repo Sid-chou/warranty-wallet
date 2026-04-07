@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import googleIcon from '../assets/google.png';
 import './Login.css';
 
 const Login = () => {
@@ -78,14 +79,14 @@ const Login = () => {
 
     const getProviderIcon = (providerId) => {
         if (providerId === 'google') {
-            return 'public';
+            return {type:'image',value:googleIcon};
         }
 
         if (providerId === 'github') {
-            return 'code';
+            return {type:'icon',value:'code'}
         }
 
-        return 'login';
+        return {type:'icon',value:'login'};
     };
 
     return (
@@ -300,19 +301,30 @@ const Login = () => {
                             </div>
 
                             <div className="login-oauth-buttons">
-                                {oauthProviders.map((provider) => (
-                                    <button
-                                        key={provider.id}
-                                        type="button"
-                                        className="login-oauth-btn"
-                                        onClick={() => handleOAuthLogin(provider.id)}
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            {getProviderIcon(provider.id)}
-                                        </span>
-                                        {getProviderLabel(provider.id, provider.name)}
-                                    </button>
-                                ))}
+                                {oauthProviders.map((provider) => {
+                                    const iconData = getProviderIcon(provider.id);
+                                    return (
+                                        <button
+                                            key={provider.id}
+                                            type="button"
+                                            className="login-oauth-btn"
+                                            onClick={() => handleOAuthLogin(provider.id)}
+                                        >
+                                            {iconData.type === 'image' ? (
+                                                <img 
+                                                    src={iconData.value} 
+                                                    alt="" 
+                                                    className="login-provider-icon"
+                                                />
+                                            ) : (
+                                                <span className="material-symbols-outlined">
+                                                    {iconData.value}
+                                                </span>
+                                            )}
+                                            {getProviderLabel(provider.id, provider.name)}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}

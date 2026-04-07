@@ -729,7 +729,7 @@
   min-height: 48px;
   border-radius: 9999px;
   border: 1px solid #e2e8f0;
-  background: #fff7f3;
+  background: #ffffff;
   color: #1e293b;
   font-size: 14px;
   font-weight: 700;
@@ -744,7 +744,7 @@
 
 .login-oauth-btn:hover {
   border-color: #fdba74;
-  background: #fff1e8;
+  background: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(232, 66, 10, 0.12);
 }
@@ -752,6 +752,12 @@
 .login-oauth-btn .material-symbols-outlined {
   font-size: 18px;
   color: #E8420A;
+}
+
+.login-provider-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 /* Signup Link */

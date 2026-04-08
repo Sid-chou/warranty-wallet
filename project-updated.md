@@ -1,5 +1,22 @@
 # Project Update Log
 
+## 📅 April 9, 2026 - Asynchronous OCR Pipeline
+**Major Technical & Logic Fixes:**
+*   **Background Processing Architecture**: Implemented a Redis-backed job queue for bill scanning. This prevents frontend timeouts during slow OCR extractions by offloading the work to a standalone worker.
+*   **Redis Integration**: Configured `RedisConfig` using Lettuce to connect to Upstash Redis for reliable task management.
+*   **Asynchronous Worker**: Created `OcrWorker` and `OcrJobService` to manage the lifecycle of a scan request (`pending` -> `done`/`failed`).
+*   **Service Expansion**: Added `scanFromImageUrl()` to `WarrantyService` to allow the background worker to process previously uploaded Cloudinary assets.
+*   **Dependency Optimization**: Updated `pom.xml` to enable `MockMultipartFile` in production for seamless byte-to-file wrapping during async flows.
+
+---
+
+## 📅 April 8, 2026 - Gemini OCR Stability & MUI Fix
+**Major Technical & Logic Fixes:**
+*   **Model Name Correction**: Fixed a typo where the OCR service was targeting a non-existent `gemini-2.5-flash` model. Reverted to the stable `gemini-1.5-flash` to resolve 503 errors.
+*   **MUI Shadow System Repair**: Fixed a console warning in `theme.js` where components using `elevation={24}` (like the Signup card) were referencing an out-of-bounds shadow index.
+
+---
+
 ## 2026-03-28 22:45 - Phase 2: Power Features Implementation
 **New Features:**
 - **PDF Export Engine**: Integrated `jsPDF` in frontend. Users can now download a professional 2-page "Warranty Passport" with OCR data and bill imagery.

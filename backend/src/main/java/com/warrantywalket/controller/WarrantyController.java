@@ -1,6 +1,8 @@
 package com.warrantywalket.controller;
 
 import com.warrantywalket.dto.WarrantyResponse;
+import com.warrantywalket.service.CloudinaryService;
+import com.warrantywalket.service.OcrJobService;
 import com.warrantywalket.service.WarrantyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.UUID;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,12 @@ public class WarrantyController {
 
     @Autowired
     private WarrantyService warrantyService;
+
+    @Autowired
+    private OcrJobService ocrJobService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @PostMapping("/scan")
     public ResponseEntity<?> scanBill(
@@ -33,6 +42,66 @@ public class WarrantyController {
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Failed to scan bill: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    @PostMapping("/scan/async")
+    public ResponseEntity<?> scanBillAsync(
+            @RequestParam("file") MultipartFile file,
+            Authentication authentication) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+
+            // Upload to Cloudinary first — fast, worker needs the URL
+            String imageUrl = cloudinaryService.uploadImage(file);
+
+            // Generate unique job ID
+            String jobId = UUID.randomUUID().toString();
+
+            // Push to Redis queue — returns instantly
+            ocrJobService.pushJob(jobId, username, imageUrl);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("jobId", jobId);
+            response.put("status", "processing");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Failed to queue scan: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    @GetMapping("/scan/status/{jobId}")
+    public ResponseEntity<?> getScanStatus(@PathVariable String jobId) {
+        try {
+            String status = ocrJobService.getStatus(jobId);
+
+            Map<String, Object> response = new HashMap<>();
+
+            if (status.equals("done")) {
+                String result = ocrJobService.getResult(jobId);
+                response.put("status", "done");
+                response.put("data", result);
+                return ResponseEntity.ok(response);
+            }
+
+            if (status.startsWith("failed")) {
+                response.put("status", "failed");
+                response.put("reason", status.replace("failed:", ""));
+                return ResponseEntity.ok(response);
+            }
+
+            // still pending
+            response.put("status", status);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
             return ResponseEntity.internalServerError().body(error);
         }
     }

@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.client.RestTemplate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +69,52 @@ public class WarrantyService {
         warranty = warrantyRepository.save(warranty);
 
         return mapToResponse(warranty);
+    }
+
+    public WarrantyResponse scanFromImageUrl(String imageUrl, String userId) throws IOException {
+        // Download image from Cloudinary as bytes
+        RestTemplate restTemplate = new RestTemplate();
+        byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
+
+        if (imageBytes == null) {
+            throw new RuntimeException("Failed to download image from: " + imageUrl);
+        }
+
+        // Convert bytes to MultipartFile so OcrService can process it
+        MultipartFile multipartFile = new MockMultipartFile(
+            "file",
+            "warranty.jpg",
+            "image/jpeg",
+            imageBytes
+        );
+
+        // Reuse existing OCR logic
+        Map<String, String> extractedData = this.ocrService.extractBillDetails(multipartFile);
+
+        // Everything below is same as scanAndSaveBill()
+        Warranty warranty = new Warranty(userId);
+        warranty.setInvoiceNumber(extractedData.get("invoice_number"));
+        warranty.setSerialNumber(extractedData.get("serial_number"));
+        warranty.setModelNumber(extractedData.get("model_number"));
+        warranty.setAssetPrice(extractedData.get("asset_price"));
+        warranty.setWarrantyPeriod(extractedData.get("warranty_period"));
+        warranty.setPaymentMethod(extractedData.get("payment_method"));
+        warranty.setMerchantName(extractedData.get("merchant_name"));
+        warranty.setProductName(extractedData.get("product_name"));
+        warranty.setCategory(this.categoryService.categorize(
+            warranty.getProductName(), 
+            warranty.getMerchantName()
+        ));
+        warranty.setImagePath(imageUrl);
+
+        String invoiceDateStr = extractedData.get("invoice_date");
+        if (invoiceDateStr != null && !invoiceDateStr.isEmpty()) {
+            warranty.setInvoiceDate(this.parseDate(invoiceDateStr));
+        }
+
+        this.calculateWarrantyExpiry(warranty);
+        warranty = this.warrantyRepository.save(warranty);
+        return this.mapToResponse(warranty);
     }
 
     public List<WarrantyResponse> getUserWarranties(String userId) {

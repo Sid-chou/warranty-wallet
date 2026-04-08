@@ -16,11 +16,13 @@ public class WarrantyWalletApplication {
             rootDotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
         } catch (Exception ignored) {}
 
-        // Try loading from current directory
         try {
             Dotenv localDotenv = Dotenv.configure().ignoreIfMissing().load();
             localDotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
-        } catch (Exception ignored) {}
+            System.out.println("✅ .env loaded successfully");
+        } catch (Exception ignored) {
+            System.err.println("❌ .env failed to load");
+        }
 
         SpringApplication.run(WarrantyWalletApplication.class, args);
     }

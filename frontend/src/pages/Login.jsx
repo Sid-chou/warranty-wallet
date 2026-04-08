@@ -229,14 +229,14 @@ const Login = () => {
                             src={logo1} 
                             alt="Logo" 
                             style={{ 
-                                width: 64, 
-                                height: 64, 
+                                width: 94, 
+                                height: 94, 
                                 objectFit: 'contain', 
-                                marginRight: '-8px' 
+                                marginRight: '-18px' 
                             }} 
                         />
                     </div>
-                    <span className="login-mobile-brand-name" style={{ fontWeight: 800, fontSize: '1.1rem' }}>
+                    <span className="login-mobile-brand-name" style={{ fontWeight: 800, fontSize: '1.4rem' }}>
                         Warranty Wallet
                     </span>
                 </div>

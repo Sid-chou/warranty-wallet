@@ -474,12 +474,12 @@
 
 .login-mobile-brand-icon {
   display: flex;
-  padding: 6px;
+  /* padding: 6px; */
   /* Grow with logo size */
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #E8420A;
+  /* background: #E8420A; */
   color: #fff;
 }
 

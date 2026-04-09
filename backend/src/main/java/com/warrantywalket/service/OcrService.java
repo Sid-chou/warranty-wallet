@@ -59,7 +59,7 @@ public class OcrService {
 
             Map<String, Object> part1 = new HashMap<>();
             part1.put("text",
-                    "Extract warranty and bill information from this receipt/invoice image. Return strictly valid JSON with these exact keys: 'invoice_date' (format dd/MM/yyyy), 'invoice_number', 'serial_number', 'model_number', 'asset_price', 'warranty_period' (e.g. '1 year', '6 months'), 'payment_method', 'merchant_name', 'product_name'. If a value is not found, leave it as an empty string.");
+                    "Extract warranty and bill information from this receipt/invoice image. Return strictly valid JSON with these exact keys: 'invoice_date' (format dd/MM/yyyy), 'invoice_number', 'serial_number', 'model_number', 'asset_price' (extract the final total amount, often labeled as 'Total', 'Total Due', 'Amount', or 'Grand Total'), 'warranty_period' (e.g. '1 year', '6 months'), 'payment_method', 'merchant_name', 'product_name'. If a value is not found, leave it as an empty string.");
 
             Map<String, Object> part2 = new HashMap<>();
             part2.put("inline_data", inlineData);

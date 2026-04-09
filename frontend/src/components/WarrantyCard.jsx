@@ -8,6 +8,8 @@ import {
   Box,
   Button,
   Grid,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   Laptop,
@@ -16,9 +18,17 @@ import {
   Article,
   PictureAsPdf,
 } from "@mui/icons-material";
+import { TbTrash } from "react-icons/tb";
 
 const WarrantyCard = ({ warranty, onDelete }) => {
   const [countdown, setCountdown] = useState("");
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this warranty?")) {
+      onDelete(warranty.id);
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -144,6 +154,33 @@ const WarrantyCard = ({ warranty, onDelete }) => {
         },
       }}
     >
+      {/* Delete Button (Top Left) */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 12,
+          left: 12,
+          zIndex: 2,
+        }}
+      >
+        <Tooltip title="Delete Warranty" placement="top" arrow>
+          <IconButton
+            onClick={handleDelete}
+            size="small"
+            sx={{
+              backgroundColor: "rgba(192, 57, 43, 0.04)",
+              color: "#C0392B",
+              "&:hover": {
+                backgroundColor: "rgba(192, 57, 43, 0.11)",
+                color: "#A93226",
+              },
+            }}
+          >
+            <TbTrash size={18} />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
       {/* Status Badge */}
       <Box
         sx={{

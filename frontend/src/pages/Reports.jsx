@@ -6,7 +6,7 @@ import TopBar from '../components/TopBar';
 import StatsCard from '../components/StatsCard';
 
 const Reports = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const handleToggleSidebar = () => {
         setSidebarOpen((prev) => !prev);
@@ -14,7 +14,7 @@ const Reports = () => {
 
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-            <Sidebar open={sidebarOpen} />
+            <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <Box
                 sx={{
@@ -22,6 +22,7 @@ const Reports = () => {
                     minWidth: 0,
                     display: 'flex',
                     flexDirection: 'column',
+                    width: '100%',
                 }}
             >
                 <TopBar onToggleSidebar={handleToggleSidebar} />

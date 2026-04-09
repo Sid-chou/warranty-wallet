@@ -24,7 +24,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [tabValue, setTabValue] = useState(0);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const handleToggleSidebar = () => {
         setSidebarOpen((prev) => !prev);
@@ -99,7 +99,7 @@ const Dashboard = () => {
 
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-            <Sidebar open={sidebarOpen} />
+            <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <Box
                 sx={{
@@ -107,13 +107,21 @@ const Dashboard = () => {
                     minWidth: 0,
                     display: 'flex',
                     flexDirection: 'column',
+                    width: '100%',
                 }}
             >
                 <TopBar onToggleSidebar={handleToggleSidebar} />
 
                 <Box sx={{ flexGrow: 1, p: 4 }}>
                     {/* Page Header */}
-                    <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box sx={{ 
+                        mb: 4, 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'flex-start',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                    }}>
                         <Box>
                             <Typography
                                 variant="h4"

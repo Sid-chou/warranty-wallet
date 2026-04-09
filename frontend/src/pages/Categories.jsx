@@ -288,7 +288,7 @@ const ALL_CARD_CONFIG = {
 const Categories = () => {
   const navigate = useNavigate();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [warranties, setWarranties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -382,7 +382,7 @@ const Categories = () => {
         backgroundColor: "var(--background-beige, #fafafa)",
       }}
     >
-      <Sidebar open={sidebarOpen} />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <Box
         sx={{
@@ -391,6 +391,7 @@ const Categories = () => {
           display: "flex",
           flexDirection: "column",
           transition: "margin-left 0.3s ease",
+          width: "100%",
         }}
       >
         <TopBar onToggleSidebar={handleToggleSidebar} />

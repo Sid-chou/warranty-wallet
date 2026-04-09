@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTheme, useMediaQuery } from '@mui/material';
 import {
     Box,
     Drawer,
@@ -24,9 +25,11 @@ import logo1 from '../assets/logo1.png';
 
 const SIDEBAR_WIDTH = 220;
 
-const Sidebar = ({ open = true }) => {
+const Sidebar = ({ open = true, onClose }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const menuItems = [
         { text: 'Overview', icon: <DashboardIcon />, path: '/dashboard' },
@@ -50,9 +53,10 @@ const Sidebar = ({ open = true }) => {
 
     return (
         <Drawer
-            variant="persistent"
+            variant={isMobile ? "temporary" : "persistent"}
             anchor="left"
             open={open}
+            onClose={onClose}
             sx={{
                 width: open ? SIDEBAR_WIDTH : 0,
                 flexShrink: 0,

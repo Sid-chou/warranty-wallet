@@ -6,7 +6,7 @@ import TopBar from '../components/TopBar';
 import { userAPI } from '../services/api';
 
 const Settings = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [settings, setSettings] = useState({
         notificationsEnabled: true,
         notificationEmail: '',
@@ -64,7 +64,7 @@ const Settings = () => {
 
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-            <Sidebar open={sidebarOpen} />
+            <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <Box
                 sx={{
@@ -72,6 +72,7 @@ const Settings = () => {
                     minWidth: 0,
                     display: 'flex',
                     flexDirection: 'column',
+                    width: '100%',
                 }}
             >
                 <TopBar onToggleSidebar={handleToggleSidebar} />

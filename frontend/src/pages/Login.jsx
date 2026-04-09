@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { authAPI } from '../services/api';
 import googleIcon from '../assets/google.png';
 import logo1 from '../assets/logo1.png';
 import './Login.css';
+
+const chartData = [
+    { name: 'Electronics', count: 75, fill: '#E8420A' },
+    { name: 'Appliances', count: 55, fill: '#22c55e' },
+    { name: 'Vehicles', count: 40, fill: '#facc15' },
+];
 
 const Login = () => {
     const navigate = useNavigate();
@@ -126,25 +133,26 @@ const Login = () => {
                                 <span>Warranty Overview</span>
                                 <span className="material-symbols-outlined" style={{ color: '#9ca3af', fontSize: 18 }}>more_horiz</span>
                             </div>
-                            <div className="login-chart-bars">
-                                <div className="login-chart-bar-group">
-                                    <div className="login-chart-bar-track" style={{ background: '#fff7ed' }}>
-                                        <div className="login-chart-bar-fill" style={{ background: '#E8420A', height: '75%' }}></div>
-                                    </div>
-                                    <span className="login-chart-bar-label">Electronics</span>
-                                </div>
-                                <div className="login-chart-bar-group">
-                                    <div className="login-chart-bar-track" style={{ background: '#f0fdf4' }}>
-                                        <div className="login-chart-bar-fill" style={{ background: '#22c55e', height: '55%' }}></div>
-                                    </div>
-                                    <span className="login-chart-bar-label">Appliances</span>
-                                </div>
-                                <div className="login-chart-bar-group">
-                                    <div className="login-chart-bar-track" style={{ background: '#fefce8' }}>
-                                        <div className="login-chart-bar-fill" style={{ background: '#facc15', height: '40%' }}></div>
-                                    </div>
-                                    <span className="login-chart-bar-label">Vehicles</span>
-                                </div>
+                            <div className="login-chart-bars" style={{ width: '100%', height: 140 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                                        <XAxis 
+                                            dataKey="name" 
+                                            axisLine={false} 
+                                            tickLine={false} 
+                                            tick={{ fontSize: 10, fill: '#6b7280', fontWeight: 600 }} 
+                                            dy={8}
+                                        />
+
+                                        <Bar dataKey="count" radius={[6, 6, 0, 0]} maxBarSize={40}>
+                                            {
+                                                chartData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                                ))
+                                            }
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
                         </div>
 

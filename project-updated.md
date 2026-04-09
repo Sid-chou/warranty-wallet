@@ -1,5 +1,12 @@
 # Project Update Log
 
+## 📅 April 9, 2026 (Part 2) - Hero Presentation Upgrade
+**Design Adjustments:**
+*   **Hero Chart Integration**: Replaced the non-functional empty CSS mockup graph on the Login page with a fully interactive, responsive `recharts` `BarChart`. Added `recharts` to frontend dependencies.
+*   **Fixes**: Removed the numeric tooltip from the "Warranty Overview" visual in the hero section to keep it purely decorative as originally intended.
+
+---
+
 ## 📅 April 9, 2026 - Asynchronous OCR Pipeline
 **Major Technical & Logic Fixes:**
 *   **Background Processing Architecture**: Implemented a Redis-backed job queue for bill scanning. This prevents frontend timeouts during slow OCR extractions by offloading the work to a standalone worker.

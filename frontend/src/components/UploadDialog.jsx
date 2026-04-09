@@ -20,6 +20,8 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
     const [extractedData, setExtractedData] = useState(null);
+    const [processingStatus, setProcessingStatus] = useState('idle');
+    // idle | uploading | processing | done
 
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
@@ -49,10 +51,20 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
 
         setUploading(true);
         setError('');
+        setProcessingStatus('uploading');
 
         try {
-            const response = await warrantyAPI.scanBill(selectedFile);
-            setExtractedData(response.data);
+            // Step 1 — submit job, get jobId instantly
+            const response = await warrantyAPI.scanBillAsync(selectedFile);
+            const { jobId } = response.data;
+
+            setProcessingStatus('processing');
+
+            // Step 2 — poll every 2 seconds
+            const result = await pollForResult(jobId);
+
+            setExtractedData(result);
+            setProcessingStatus('done');
 
             // Auto-close after showing success
             setTimeout(() => {
@@ -60,10 +72,45 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                 onSuccess();
             }, 2000);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to scan bill. Please try again.');
+            setError(err.response?.data?.error || err.message || 'Failed to scan bill. Please try again.');
+            setProcessingStatus('idle');
         } finally {
             setUploading(false);
         }
+    };
+
+    // Polling helper
+    const pollForResult = (jobId) => {
+        return new Promise((resolve, reject) => {
+            const maxAttempts = 30; // 30 × 2s = 60 seconds max wait
+            let attempts = 0;
+
+            const interval = setInterval(async () => {
+                try {
+                    attempts++;
+                    const res = await warrantyAPI.getScanStatus(jobId);
+                    const { status, data } = res.data;
+
+                    if (status === 'done') {
+                        clearInterval(interval);
+                        resolve(JSON.parse(data));
+                    }
+
+                    if (status && status.startsWith('failed')) {
+                        clearInterval(interval);
+                        reject(new Error(res.data.reason || 'OCR failed'));
+                    }
+
+                    if (attempts >= maxAttempts) {
+                        clearInterval(interval);
+                        reject(new Error('Scan timed out. Please try again.'));
+                    }
+                } catch (err) {
+                    clearInterval(interval);
+                    reject(err);
+                }
+            }, 2000);
+        });
     };
 
     const handleClose = () => {
@@ -71,6 +118,7 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
         setPreview(null);
         setError('');
         setExtractedData(null);
+        setProcessingStatus('idle');
         onClose();
     };
 
@@ -185,11 +233,31 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                             </Box>
                         )}
 
-                        {uploading && (
+                        {processingStatus === 'uploading' && (
                             <Box sx={{ mt: 2 }}>
                                 <LinearProgress />
-                                <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-                                    Scanning bill and extracting warranty details...
+                                <Typography variant="body2" color="primary" align="center" sx={{ mt: 1 }}>
+                                    Uploading image...
+                                </Typography>
+                            </Box>
+                        )}
+                        {processingStatus === 'processing' && (
+                            <Box sx={{ mt: 2 }}>
+                                <LinearProgress color="warning" />
+                                <Typography 
+                                    variant="body2" 
+                                    color="warning.main" 
+                                    align="center" 
+                                    sx={{ mt: 1 }}
+                                >
+                                    Scanning bill with AI... please wait
+                                </Typography>
+                            </Box>
+                        )}
+                        {processingStatus === 'done' && (
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="body2" color="success.main" align="center">
+                                    Scan complete!
                                 </Typography>
                             </Box>
                         )}
@@ -205,7 +273,10 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                         onClick={handleUpload}
                         disabled={!selectedFile || uploading}
                     >
-                        {uploading ? 'Scanning...' : 'Scan Bill'}
+                        {processingStatus === 'uploading' && 'Uploading...'}
+                        {processingStatus === 'processing' && 'Processing...'}
+                        {processingStatus === 'done' && 'Done!'}
+                        {processingStatus === 'idle' && 'Scan Bill'}
                     </Button>
                 </DialogActions>
             )}

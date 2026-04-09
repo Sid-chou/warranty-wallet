@@ -1,5 +1,11 @@
 # Project Update Log
 
+## 📅 April 9, 2026 (Part 3) - Asynchronous OCR Frontend Flow
+**Major Technical & Logic Fixes:**
+*   **Polling Implementation**: Updated `UploadDialog.jsx` to support the new asynchronous backend. It now submits a job, receives a `jobId`, and polls the status every 2 seconds until completion or timeout.
+*   **Detailed Status Feedback**: Added a `processingStatus` state to provide real-time feedback to the user ("Uploading...", "Scanning with AI...", "Complete!").
+*   **API Expansion**: Added `scanBillAsync` and `getScanStatus` to the `warrantyAPI` service to interface with the new Redis-backed worker system.
+
 ## 📅 April 9, 2026 (Part 2) - Hero Presentation Upgrade
 **Design Adjustments:**
 *   **Hero Chart Integration**: Replaced the non-functional empty CSS mockup graph on the Login page with a fully interactive, responsive `recharts` `BarChart`. Added `recharts` to frontend dependencies.

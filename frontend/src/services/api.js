@@ -48,11 +48,23 @@ export const authAPI = {
 
 // Warranty APIs
 export const warrantyAPI = {
+  // OLD sync endpoint — keep as fallback
   scanBill: (file) => {
     const formData = new FormData();
     formData.append("file", file);
     return api.post("/warranties/scan", formData);
   },
+
+  // NEW async endpoint — submit job
+  scanBillAsync: (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/warranties/scan/async", formData);
+  },
+
+  // NEW polling endpoint — check job status
+  getScanStatus: (jobId) => api.get(`/warranties/scan/status/${jobId}`),
+
   getAllWarranties: () => api.get("/warranties"),
   getActiveWarranties: () => api.get("/warranties/active"),
   getExpiredWarranties: () => api.get("/warranties/expired"),

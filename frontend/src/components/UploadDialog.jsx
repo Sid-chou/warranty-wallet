@@ -250,7 +250,7 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                                     align="center" 
                                     sx={{ mt: 1 }}
                                 >
-                                    Scanning bill ... please wait
+                                    Scanning bill... please wait
                                 </Typography>
                             </Box>
                         )}

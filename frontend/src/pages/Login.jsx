@@ -223,7 +223,7 @@ const Login = () => {
             {/* ===== Right Panel - Login Form ===== */}
             <div className="login-right-panel">
                 {/* Mobile Brand */}
-                <div className="login-mobile-brand" style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
+                {/* <div className="login-mobile-brand" style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
                     <div className="login-mobile-brand-icon">
                         <img 
                             src={logo1} 
@@ -239,7 +239,7 @@ const Login = () => {
                     <span className="login-mobile-brand-name" style={{ fontWeight: 800, fontSize: '1.4rem' }}>
                         Warranty Wallet
                     </span>
-                </div>
+                </div> */}
 
                 <div className="login-form-container">
                     <div className="login-form-header">

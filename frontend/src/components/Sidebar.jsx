@@ -69,15 +69,15 @@ const Sidebar = ({ open = true }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 {/* Logo Section */}
                 <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <img 
-                        src={logo1} 
-                        alt="Logo" 
-                        style={{ 
-                            width: 78, 
-                            height: 78, 
-                            objectFit: 'contain', 
+                    <img
+                        src={logo1}
+                        alt="Logo"
+                        style={{
+                            width: 78,
+                            height: 78,
+                            objectFit: 'contain',
                             marginRight: '-10px' // This "pulls" the text closer to the logo graphics
-                        }} 
+                        }}
                     />
                     <Typography
                         variant="h6"

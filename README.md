@@ -1,55 +1,84 @@
 # Warranty Wallet
 
-Warranty Wallet is a full-stack warranty management app that turns purchase bills into structured, searchable warranty records. Users upload a receipt image, the backend extracts warranty data with Gemini, stores the original bill in Cloudinary, calculates expiry dates, and surfaces everything in a React dashboard with reminders and PDF export.
+**Never lose a warranty again.**
 
-## Highlights
+Warranty Wallet turns messy purchase receipts into smart, structured, searchable digital records using AI. Upload a bill image → Gemini extracts all key details → expiry dates are calculated automatically → you get timely reminders and a beautiful "Warranty Passport" PDF.
 
-- Scan bill images and extract invoice date, invoice number, product name, serial number, model number, merchant, payment method, price, and warranty period
-- Calculate expiry dates automatically and classify records as `ACTIVE`, `EXPIRING_SOON`, or `EXPIRED`
-- Store original bill images in Cloudinary instead of relying on local files
-- Export a "Warranty Passport" PDF with structured data and the original bill image
-- Send scheduled email reminders 30, 7, and 1 day before warranty expiry
-- Support username/password login with optional Google and GitHub OAuth
-- Keep user preferences for notifications in a dedicated settings flow
+Stop digging through old emails and crumpled bills. Keep every warranty in one clean dashboard with smart status tracking (Active / Expiring Soon / Expired).
+
+![Dashboard Screenshot](frontend/src/assets/dasboard.jpeg)
+<!-- Add your actual screenshots here: dashboard, upload flow, PDF preview, etc. -->
+
+## ✨ Key Features
+
+- AI-powered receipt scanning using **Gemini 1.5 Flash** (extracts invoice date, product name, serial/model, merchant, price, warranty period, etc.)
+- Automatic expiry calculation with smart status: **ACTIVE**, **EXPIRING_SOON**, **EXPIRED**
+- Secure original bill storage in Cloudinary
+- One-click "Warranty Passport" PDF export (data + embedded image)
+- Scheduled email reminders (30, 7, and 1 day before expiry)
+- Authentication: username/password + Google & GitHub OAuth
+- User notification preferences
+
+## Architecture: Async Processing with Redis (Upstash)
+
+## Async Scan Pipeline with Redis
+
+The `/scan` endpoint uses a Redis (Upstash) based background job queue.
+
+- Upload request pushes the image to a Redis queue and returns immediately (< 1 second response time).
+- A background worker consumes the job, runs Gemini 2.5 Flash extraction, processes the warranty data, and stores the result in MongoDB + Cloudinary.
+- This completely decouples heavy AI work from HTTP requests, preventing blocking and timeouts.
+
+
+1. User uploads image → Job is pushed to Redis queue → HTTP response returns **under 1 second**.
+2. Background worker consumes the job, performs Gemini extraction + business logic.
+3. Results (structured warranty data + Cloudinary URL) are saved to MongoDB.
+4. User can see the processed record shortly after (via polling or dashboard refresh).
+
+This decoupling made the API responsive, improved scalability for multiple users, and eliminated timeout issues.
+
+**Tech used for this:** Spring Boot + Redis (Upstash) + background workers.
 
 ## How It Works
-
 ```text
-React + Vite frontend
-    ->
-Spring Boot API
-    -> Gemini 2.5 Flash for receipt extraction
-    -> MongoDB for users and warranties
-    -> Cloudinary for bill image storage
-    -> SMTP for scheduled email alerts
+React + Vite Frontend
+        ↓ (fast upload)
+    Spring Boot API
+        ↓
+├── Redis (Upstash)      → Job queue for async processing
+├── Gemini 1.5 Flash     → Structured receipt extraction (in background worker)
+├── MongoDB              → Users + warranty records
+├── Cloudinary           → Original bill image storage
+└── Spring Scheduler + SMTP → Email reminders
 ```
 
 ## Tech Stack
 
-| Layer | Tools |
-| --- | --- |
-| Frontend | React 19, Vite 7, Material UI 7, React Router 7, Axios |
-| Backend | Spring Boot 3.2, Java 17, Spring Security, JWT, OAuth2 Client |
-| Data | MongoDB |
-| AI and OCR | Gemini 2.5 Flash |
-| Storage | Cloudinary |
-| Documents | jsPDF, jspdf-autotable |
-| Alerts | Spring Mail, scheduled jobs |
-| Deployment | Docker, Render, Vercel |
+| Layer              | Technologies |
+|--------------------|--------------|
+| **Frontend**       | React 19, Vite 7, Material UI 7, React Router 7, Axios |
+| **Backend**        | Spring Boot 3.2, Java 17, Spring Security, JWT, OAuth2, **Spring Data Redis** |
+| **Queue / Async**  | **Redis (Upstash)** – Background job queue for OCR/extraction |
+| **Database**       | MongoDB |
+| **AI**             | Gemini 1.5 Flash |
+| **Storage**        | Cloudinary |
+| **Documents**      | jsPDF + jspdf-autotable |
+| **Alerts**         | Spring Mail + Scheduled Jobs |
+| **Deployment**     | Docker, Render (backend), Vercel (frontend) |
 
-## Repository Layout
+## Repository Structure
 
 ```text
 warranty-wallet/
 |-- backend/                     Spring Boot API
 |   |-- src/main/java/com/warrantywalket/
-|   |   |-- config/              security and app configuration
+|   |   |-- config/              security, Redis, and app configuration
 |   |   |-- controller/          REST endpoints
 |   |   |-- dto/                 request and response models
 |   |   |-- model/               MongoDB entities
 |   |   |-- repository/          data access
 |   |   |-- security/            JWT and OAuth2 handling
-|   |   `-- service/             OCR, alerts, Cloudinary, business logic
+|   |   `-- service/             Async workers, OCR, alerts, Cloudinary
 |   `-- src/main/resources/
 |       `-- application.properties
 |-- frontend/                    React application
@@ -59,116 +88,77 @@ warranty-wallet/
 |-- Dockerfile                   backend container build
 |-- render.yaml                  backend deployment config
 |-- vercel.json                  frontend SPA routing config
-|-- ocr_service.py               legacy Tesseract prototype
-|-- ocring.py                    earlier OCR experiment
-`-- requirements.txt             Python dependencies for legacy OCR scripts
 ```
 
-## Important Note About OCR
-
-The active application flow does not use the root Python OCR script. The running backend uses [`backend/src/main/java/com/warrantywalket/service/OcrService.java`](backend/src/main/java/com/warrantywalket/service/OcrService.java) and sends receipt images to Gemini for structured extraction.
-
-Files such as `ocr_service.py`, `ocring.py`, and `requirements.txt` are older prototype artifacts kept in the repository.
-
-## Local Development
+## Quick Start / Local Development
 
 ### Prerequisites
 
 - Java 17+
 - Maven 3.9+
-- Node.js current LTS, with Node 20+ recommended for the Vite toolchain
-- MongoDB instance, local or Atlas
+- Node.js 20+
+- MongoDB instance (local or Atlas)
 - Cloudinary account
 - Gemini API key
-- SMTP credentials if you want email reminders
-- Optional Google and GitHub OAuth app credentials
+- Redis (Upstash) instance
+- SMTP credentials for emails
 
-### Backend Environment Variables
+### Environment Variables
 
 Set these before starting the backend:
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `SPRING_DATA_MONGODB_URI` | Yes | MongoDB connection string |
-| `MONGODB_DATABASE` | No | Database name, defaults to `warranty_wallet` |
 | `JWT_SECRET` | Yes | Secret used to sign JWTs |
-| `JWT_EXPIRATION` | No | Token lifetime in milliseconds, defaults to `86400000` |
 | `CLOUDINARY_URL` | Yes | Cloudinary connection URL |
 | `GEMINI_API_KEY` | Yes | Gemini API key for receipt extraction |
-| `ALLOWED_ORIGINS` | No | CORS origin list, defaults to `http://localhost:5173` |
-| `FRONTEND_URL` | No | Frontend base URL, defaults to `http://localhost:5173` |
+| `UPSTASH_REDIS_URL` | Yes | Upstash Redis connection URL |
+| `UPSTASH_REDIS_TOKEN` | Yes | Upstash token (if using REST) |
 | `SMTP_EMAIL` | No | Sender email for alert notifications |
 | `SMTP_PASSWORD` | No | Sender app password for SMTP |
-| `GOOGLE_CLIENT_ID` | No | Enable Google OAuth |
-| `GOOGLE_CLIENT_SECRET` | No | Enable Google OAuth |
-| `GITHUB_CLIENT_ID` | No | Enable GitHub OAuth |
-| `GITHUB_CLIENT_SECRET` | No | Enable GitHub OAuth |
-| `PORT` | No | Backend port, defaults to `8080` |
 
-Example PowerShell session:
+### Start Commands
 
-```powershell
-$env:SPRING_DATA_MONGODB_URI="mongodb+srv://<user>:<password>@<cluster>/<db>"
-$env:JWT_SECRET="replace-this-with-a-long-random-secret"
-$env:CLOUDINARY_URL="cloudinary://<key>:<secret>@<cloud-name>"
-$env:GEMINI_API_KEY="<your-gemini-api-key>"
-$env:ALLOWED_ORIGINS="http://localhost:5173"
-$env:FRONTEND_URL="http://localhost:5173"
-```
-
-### Start The Backend
-
+**Backend:**
 ```powershell
 cd backend
 mvn spring-boot:run
 ```
 
-The API starts on `http://localhost:8080` by default.
-
-### Start The Frontend
-
-Create `frontend/.env` if you want to point the UI at a custom backend:
-
-```env
-VITE_API_URL=http://localhost:8080/api
-```
-
-Then run:
-
+**Frontend:**
 ```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-The frontend starts on `http://localhost:5173`.
-
-## Core API Routes
+## Core API Endpoints
 
 | Method | Route | Description |
 | --- | --- | --- |
 | `POST` | `/api/auth/signup` | Register a new user |
 | `POST` | `/api/auth/login` | Authenticate and receive a JWT |
-| `GET` | `/api/auth/oauth/providers` | List enabled OAuth providers |
-| `POST` | `/api/warranties/scan` | Upload a bill image and create a warranty record |
-| `GET` | `/api/warranties` | Fetch all warranties for the authenticated user |
-| `GET` | `/api/warranties/active` | Fetch active and expiring warranties |
-| `GET` | `/api/warranties/expired` | Fetch expired warranties |
-| `DELETE` | `/api/warranties/{id}` | Delete a warranty and its stored bill image |
+| `POST` | `/api/warranties/scan` | Upload a bill image (Async Queue) |
+| `GET` | `/api/warranties` | Fetch all user warranties |
+| `DELETE` | `/api/warranties/{id}` | Delete a warranty record |
 | `GET` | `/api/user/settings` | Load notification settings |
-| `PUT` | `/api/user/settings` | Update notification preferences |
 
-Protected routes require a bearer token except the public auth endpoints.
+## Current Scope & Roadmap
 
-## Deployment Notes
+### Completed:
+-  Full auth flow (JWT + OAuth2)
+-  **Async Redis-based scan pipeline** (Fast upload + background processing)
+-  Warranty management with automatic expiry tracking
+-  Cloudinary storage + "Warranty Passport" PDF export
+-  Smart status classifying (Active / Expiring Soon / Expired)
+-  Scheduled email reminders
 
-- `Dockerfile` builds and runs the backend as a Spring Boot container.
-- `render.yaml` is prepared for deploying the backend on Render.
-- `vercel.json` rewrites all frontend routes to `index.html` so client-side routing works on Vercel.
-- Production deployments must provide the same environment variables listed above.
+### Upcoming:
+-  Rich analytics & reports module
+-  Advanced category / tagging system
+-  Real-time progress updates for scan jobs (WebSocket)
+-  Dark mode + fully optimized mobile experience
 
-## Current Scope
-
-The end-to-end flow for authentication, bill upload, extraction, warranty storage, PDF export, and notification preferences is present in the codebase.
-
-The `Reports` and `Categories` pages exist, but they are currently lightweight UI placeholders rather than full analytics modules.
+## Contributing
+Contributions and feedback welcome!

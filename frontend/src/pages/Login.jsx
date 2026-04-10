@@ -23,6 +23,8 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [oauthProviders, setOauthProviders] = useState([]);
+    const [providersLoading, setProvidersLoading] = useState(true);
+    const [providersError, setProvidersError] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -34,11 +36,15 @@ const Login = () => {
 
     useEffect(() => {
         const loadOAuthProviders = async () => {
+            setProvidersLoading(true);
             try {
                 const response = await authAPI.getOAuthProviders();
                 setOauthProviders(Array.isArray(response.data) ? response.data : []);
             } catch (err) {
                 setOauthProviders([]);
+                setProvidersError(true);
+            } finally {
+                setProvidersLoading(false);
             }
         };
 
@@ -231,24 +237,6 @@ const Login = () => {
             {/* ===== Right Panel - Login Form ===== */}
             <div className="login-right-panel">
                 {/* Mobile Brand */}
-                {/* <div className="login-mobile-brand" style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
-                    <div className="login-mobile-brand-icon">
-                        <img 
-                            src={logo1} 
-                            alt="Logo" 
-                            style={{ 
-                                width: 94, 
-                                height: 94, 
-                                objectFit: 'contain', 
-                                marginRight: '-18px' 
-                            }} 
-                        />
-                    </div>
-                    <span className="login-mobile-brand-name" style={{ fontWeight: 800, fontSize: '1.4rem' }}>
-                        Warranty Wallet
-                    </span>
-                </div> */}
-
                 <div className="login-form-container">
                     <div className="login-form-header">
                         <h1 className="login-form-title">Sign in to Warranty Wallet</h1>
@@ -325,14 +313,29 @@ const Login = () => {
                         </button>
                     </form>
 
-                    {oauthProviders.length > 0 && (
-                        <div className="login-oauth-section">
-                            <div className="login-divider">
-                                <span>or sign in with</span>
-                            </div>
+                    <div className="login-oauth-section">
+                        <div className="login-divider">
+                            <span>or sign in with</span>
+                        </div>
 
-                            <div className="login-oauth-buttons">
-                                {oauthProviders.map((provider) => {
+                        <div className="login-oauth-buttons">
+                            {providersLoading ? (
+                                <div className="login-oauth-btn-skeleton"></div>
+                            ) : providersError ? (
+                                <button
+                                    type="button"
+                                    className="login-oauth-btn"
+                                    onClick={() => handleOAuthLogin('google')}
+                                >
+                                    <img 
+                                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                                        alt="" 
+                                        className="login-provider-icon" 
+                                    />
+                                    Continue with Google
+                                </button>
+                            ) : (
+                                oauthProviders.map((provider) => {
                                     const iconData = getProviderIcon(provider.id);
                                     return (
                                         <button
@@ -355,10 +358,10 @@ const Login = () => {
                                             {getProviderLabel(provider.id, provider.name)}
                                         </button>
                                     );
-                                })}
-                            </div>
+                                })
+                            )}
                         </div>
-                    )}
+                    </div>
 
                     <div className="login-signup-link">
                         <p>

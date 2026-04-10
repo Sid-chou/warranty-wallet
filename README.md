@@ -9,7 +9,7 @@ Stop digging through old emails and crumpled bills. Keep every warranty in one c
 ![Dashboard Screenshot](frontend/src/assets/dasboard.jpeg)
 <!-- Add your actual screenshots here: dashboard, upload flow, PDF preview, etc. -->
 
-## ✨ Key Features
+## Key Features
 
 - AI-powered receipt scanning using **Gemini 1.5 Flash** (extracts invoice date, product name, serial/model, merchant, price, warranty period, etc.)
 - Automatic expiry calculation with smart status: **ACTIVE**, **EXPIRING_SOON**, **EXPIRED**
@@ -21,7 +21,7 @@ Stop digging through old emails and crumpled bills. Keep every warranty in one c
 
 ## Architecture: Async Processing with Redis (Upstash)
 
-## Async Scan Pipeline with Redis
+Async Scan Pipeline with Redis
 
 The `/scan` endpoint uses a Redis (Upstash) based background job queue.
 

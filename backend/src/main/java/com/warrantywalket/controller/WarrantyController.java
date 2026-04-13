@@ -78,7 +78,7 @@ public class WarrantyController {
     @GetMapping("/scan/status/{jobId}")
     public ResponseEntity<?> getScanStatus(@PathVariable String jobId) {
         try {
-            String status = ocrJobService.getStatus(jobId);
+            String status = ocrJobService.getStatus(jobId); //fetching from redis   
 
             Map<String, Object> response = new HashMap<>();
 
@@ -87,7 +87,7 @@ public class WarrantyController {
                 response.put("status", "done");
                 response.put("data", result);
                 return ResponseEntity.ok(response);
-            }
+            }`
 
             if (status.startsWith("failed")) {
                 response.put("status", "failed");
@@ -96,7 +96,12 @@ public class WarrantyController {
             }
 
             // still pending
+            long queuePosition = ocrJobService.getQueuePosition(jobId);
+            long estimatedWait = ocrJobService.getEstimatedWaitSeconds(jobId);
+
             response.put("status", status);
+            response.put("queuePosition", queuePosition);
+            response.put("estimatedWaitSeconds", estimatedWait);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

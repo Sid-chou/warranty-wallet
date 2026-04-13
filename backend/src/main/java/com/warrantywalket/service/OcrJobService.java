@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -41,7 +42,29 @@ public class OcrJobService {
         String status = redisCommands.get(STATUS_PREFIX + jobId);
         return status != null ? status : "not_found";
     }
+    private static final int AVG_JOB_SECONDS = 20; // rough Gemini avg per job
 
+    public long getQueuePosition(String jobId) {
+        try {
+        // Get all jobs currently in queue
+            List<String> queue = redisCommands.lrange(QUEUE_KEY, 0, -1);
+            for (int i = 0; i < queue.size(); i++) {
+                if (queue.get(i).contains(jobId)) {
+                    return i + 1; // 1-based position
+                }
+            }
+            return 0; // not in queue — being processed right now
+        } catch (Exception e) {
+            return -1; // unknown
+        }
+    }
+
+    public long getEstimatedWaitSeconds(String jobId) {
+        long position = getQueuePosition(jobId);
+        if (position <= 0) return AVG_JOB_SECONDS; // currently processing
+        return position * AVG_JOB_SECONDS;
+    }
+    
     // Called by frontend when status is "done"
     public String getResult(String jobId) {
         return redisCommands.get(RESULT_PREFIX + jobId);

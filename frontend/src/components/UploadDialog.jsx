@@ -11,7 +11,8 @@ import {
     Alert,
     Paper,
 } from '@mui/material';
-import { CloudUpload, CheckCircle } from '@mui/icons-material';
+import { CheckCircle } from '@mui/icons-material';
+import { TbCloudUpload, TbCircleCheck, TbLoaderQuarter, TbUsers, TbHourglassLow } from 'react-icons/tb';
 import { warrantyAPI } from '../services/api';
 
 const UploadDialog = ({ open, onClose, onSuccess }) => {
@@ -21,6 +22,8 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
     const [error, setError] = useState('');
     const [extractedData, setExtractedData] = useState(null);
     const [processingStatus, setProcessingStatus] = useState('idle');
+    const [queueMessage, setQueueMessage] = useState('');
+    const [queueInfo, setQueueInfo] = useState({ position: 0, wait: 0 });
     // idle | uploading | processing | done
 
     const handleFileSelect = (event) => {
@@ -79,37 +82,55 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
         }
     };
 
-    // Polling helper
+    // Optimized Adaptive Polling
     const pollForResult = (jobId) => {
         return new Promise((resolve, reject) => {
-            const maxAttempts = 30; // 30 × 2s = 60 seconds max wait
-            let attempts = 0;
+            let dynamicTimeoutMs = 90_000; // default 90s
+            let startTime = Date.now();
 
-            const interval = setInterval(async () => {
+            const poll = async () => {
                 try {
-                    attempts++;
                     const res = await warrantyAPI.getScanStatus(jobId);
-                    const { status, data } = res.data;
+                    const { status, data, queuePosition, estimatedWaitSeconds } = res.data;
 
-                    if (status === 'done') {
-                        clearInterval(interval);
-                        resolve(JSON.parse(data));
+                    // Update UI with queue info
+                    if (queuePosition !== undefined) {
+                        setQueueInfo({ position: queuePosition, wait: estimatedWaitSeconds });
+                        
+                        if (queuePosition > 1) {
+                            setQueueMessage(`Queue Position: #${queuePosition}`);
+                        } else if (queuePosition === 1) {
+                            setQueueMessage("You're next! Preparing scan...");
+                        } else {
+                            setQueueMessage("Processing your bill now...");
+                        }
                     }
 
-                    if (status && status.startsWith('failed')) {
-                        clearInterval(interval);
-                        reject(new Error(res.data.reason || 'OCR failed'));
+                    // Dynamic timeout adjustment
+                    if (estimatedWaitSeconds) {
+                        dynamicTimeoutMs = Math.max(dynamicTimeoutMs, (estimatedWaitSeconds + 30) * 1000);
                     }
 
-                    if (attempts >= maxAttempts) {
-                        clearInterval(interval);
-                        reject(new Error('Scan timed out. Please try again.'));
+                    if (status === 'done') return resolve(JSON.parse(data));
+                    if (status?.startsWith('failed')) return reject(new Error(res.data.reason || 'OCR failed'));
+
+                    // Timeout check
+                    if (Date.now() - startTime > dynamicTimeoutMs) {
+                        return reject(new Error('Scan is taking longer than expected. Please try again.'));
                     }
+
+                    // Adaptive polling interval based on queue depth
+                    const nextInterval = queuePosition > 5 ? 10_000
+                                       : queuePosition > 1 ? 5_000
+                                       : 2_000;
+
+                    setTimeout(poll, nextInterval);
                 } catch (err) {
-                    clearInterval(interval);
                     reject(err);
                 }
-            }, 2000);
+            };
+
+            poll();
         });
     };
 
@@ -187,8 +208,8 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                                     onChange={handleFileSelect}
                                     style={{ display: 'none' }}
                                 />
-                                <CloudUpload sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
-                                <Typography variant="h6" gutterBottom>
+                                <TbCloudUpload style={{ fontSize: 64, color: '#1976d2', marginBottom: 16 }} />
+                                <Typography variant="h6" gutterBottom fontWeight="600">
                                     Drop your bill image here
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
@@ -242,16 +263,40 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                             </Box>
                         )}
                         {processingStatus === 'processing' && (
-                            <Box sx={{ mt: 2 }}>
-                                <LinearProgress color="warning" />
-                                <Typography 
-                                    variant="body2" 
-                                    color="warning.main" 
-                                    align="center" 
-                                    sx={{ mt: 1 }}
-                                >
-                                    Scanning bill... please wait
+                            <Box sx={{ mt: 3, p: 2, bgcolor: 'action.hover', borderRadius: 2, textAlign: 'center' }}>
+                                <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2 }}>
+                                    <TbLoaderQuarter 
+                                        style={{ 
+                                            fontSize: 48, 
+                                            color: '#ed6c02',
+                                            animation: 'spin 2s linear infinite'
+                                        }} 
+                                    />
+                                    <style>{`
+                                        @keyframes spin {
+                                            from { transform: rotate(0deg); }
+                                            to { transform: rotate(360deg); }
+                                        }
+                                    `}</style>
+                                </Box>
+                                <Typography variant="body1" fontWeight="600" color="warning.main">
+                                    {queueMessage || 'Scanning Your Bill'}
                                 </Typography>
+                                
+                                {queueInfo.position > 0 && (
+                                    <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                            <TbHourglassLow size={14} style={{ opacity: 0.7 }} />
+                                            <Typography variant="caption" color="text.secondary">
+                                                Wait: ~{queueInfo.wait}s
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                )}
+                                <LinearProgress 
+                                    sx={{ mt: 2, height: 6, borderRadius: 3 }}
+                                    color="warning"
+                                />
                             </Box>
                         )}
                         {processingStatus === 'done' && (

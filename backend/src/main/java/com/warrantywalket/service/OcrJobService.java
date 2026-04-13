@@ -32,6 +32,9 @@ public class OcrJobService {
         redisCommands.set(STATUS_PREFIX + jobId, "pending");
         return jobId;
     }
+    public long getQueueSize() {
+        return redisCommands.llen(QUEUE_KEY);
+    }
 
     // Called by frontend polling
     public String getStatus(String jobId) {

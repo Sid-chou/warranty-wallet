@@ -98,11 +98,11 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                         setQueueInfo({ position: queuePosition, wait: estimatedWaitSeconds });
                         
                         if (queuePosition > 1) {
-                            setQueueMessage(`Queue Position: #${queuePosition}`);
+                            setQueueMessage(`Position: ${queuePosition}`);
                         } else if (queuePosition === 1) {
-                            setQueueMessage("You're next! Preparing scan...");
+                            setQueueMessage("Position: 1 (Next in line)");
                         } else {
-                            setQueueMessage("Processing your bill now...");
+                            setQueueMessage("Position: Processing...");
                         }
                     }
 
@@ -288,7 +288,7 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                             <TbHourglassLow size={14} style={{ opacity: 0.7 }} />
                                             <Typography variant="caption" color="text.secondary">
-                                                Wait: ~{queueInfo.wait}s
+                                                Estimated wait: {queueInfo.wait} sec
                                             </Typography>
                                         </Box>
                                     </Box>

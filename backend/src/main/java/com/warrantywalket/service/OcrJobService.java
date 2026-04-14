@@ -5,6 +5,7 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ public class OcrJobService {
     private static final String QUEUE_KEY = "ocr:queue";
     private static final String STATUS_PREFIX = "ocr:status:";
     private static final String RESULT_PREFIX = "ocr:result:";
+    private static final int AVG_JOB_SECONDS = 22;
 
     @Autowired
     private RedisCommands<String, String> redisCommands;
@@ -33,41 +35,22 @@ public class OcrJobService {
         redisCommands.set(STATUS_PREFIX + jobId, "pending");
         return jobId;
     }
-    public long getQueueSize() {
-        return redisCommands.llen(QUEUE_KEY);
-    }
 
-    // Called by frontend polling
-    public String getStatus(String jobId) {
+    // Called by controller for status polling — returns rich object for frontend
+    public Map<String, Object> getStatus(String jobId) {
         String status = redisCommands.get(STATUS_PREFIX + jobId);
-        return status != null ? status : "not_found";
-    }
-    private static final int AVG_JOB_SECONDS = 20; // rough Gemini avg per job
+        long queueDepth = redisCommands.llen(QUEUE_KEY);
 
-    public long getQueuePosition(String jobId) {
-        try {
-        // Get all jobs currently in queue
-            List<String> queue = redisCommands.lrange(QUEUE_KEY, 0, -1);
-            for (int i = 0; i < queue.size(); i++) {
-                if (queue.get(i).contains(jobId)) {
-                    return i + 1; // 1-based position
-                }
-            }
-            return 0; // not in queue — being processed right now
-        } catch (Exception e) {
-            return -1; // unknown
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", status != null ? status : "not_found");
+        response.put("queuePosition", queueDepth);
+        response.put("estimatedWaitSeconds", queueDepth * AVG_JOB_SECONDS);
+
+        if ("done".equals(status)) {
+            response.put("data", redisCommands.get(RESULT_PREFIX + jobId));
         }
-    }
 
-    public long getEstimatedWaitSeconds(String jobId) {
-        long position = getQueuePosition(jobId);
-        if (position <= 0) return AVG_JOB_SECONDS; // currently processing
-        return position * AVG_JOB_SECONDS;
-    }
-    
-    // Called by frontend when status is "done"
-    public String getResult(String jobId) {
-        return redisCommands.get(RESULT_PREFIX + jobId);
+        return response;
     }
 
     // Called by worker to pick up next job
@@ -87,7 +70,12 @@ public class OcrJobService {
 
     // Called by worker when OCR fails
     public void markFailed(String jobId, String reason) {
-        redisCommands.set(STATUS_PREFIX + jobId, "failed:" + reason);
-        redisCommands.expire(STATUS_PREFIX + jobId, 3600);
+        redisCommands.setex(STATUS_PREFIX + jobId, 3600, "failed:" + reason);
+        String deadEntry = jobId + "|" + reason + "|" + Instant.now();
+        redisCommands.lpush("ocr:dead", deadEntry);
+    }
+
+    public long getQueueSize() {
+        return redisCommands.llen(QUEUE_KEY);
     }
 }

@@ -32,22 +32,51 @@ const stepsData = [
   {
     n: 1,
     title: "Upload your bill",
-    body: "Take a photo of any receipt or warranty card. Any format, any quality. Just upload it."
+    body: "Take a photo of any receipt or warranty card. Any format, any quality. Just upload it.",
+    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80"
   },
   {
     n: 2,
     title: "AI reads everything",
-    body: "Gemini reads the bill and pulls out every relevant field — product, date, warranty period, price — in seconds."
+    body: "Gemini reads the bill and pulls out every relevant field — product, date, warranty period, price — in seconds.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
   },
   {
     n: 3,
     title: "We handle the rest",
-    body: "Your warranty is tracked, categorised, and monitored. You'll hear from us before it expires — and only then."
+    body: "Your warranty is tracked, categorised, and monitored. You'll hear from us before it expires.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
   }
 ];
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  // Handle auto-switching logic
+  useEffect(() => {
+    const duration = 6000; // 6 seconds per step
+    const intervalTime = 100;
+    const increment = (intervalTime / duration) * 100;
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          setActiveStep((prevStep) => (prevStep + 1) % stepsData.length);
+          return 0;
+        }
+        return prev + increment;
+      });
+    }, intervalTime);
+
+    return () => clearInterval(timer);
+  }, [activeStep]);
+
+  const handleStepClick = (index) => {
+    setActiveStep(index);
+    setProgress(0); // Reset progress on manual click
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -76,14 +105,12 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section className="ww-hero">
-        <p className="ww-hero-label ww-animate">Warranty Management</p>
         <h1 className="ww-hero-h1 ww-animate-2">
           TOO MANY BILLS.<br />
           <em>NO SYSTEM.</em>
         </h1>
         <p className="ww-hero-sub ww-animate-3">
-          Most people have dozens of products with active warranties and no idea
-          where the bills are. Warranty Wallet fixes that — one upload, tracked forever.
+          Ditch the paper clutter. Securely store your bills and get notified before your purchase protections expire.
         </p>
         <div className="ww-hero-ctas ww-animate-4">
           <a href="#how" className="ww-btn ww-btn-lg">
@@ -156,13 +183,42 @@ export default function LandingPage() {
         <p className="ww-how-label">How It Works</p>
         <h2 className="ww-how-title">THREE STEPS.<br />DONE.</h2>
         <div className="ww-steps">
-          {stepsData.map((stepItem) => (
-            <div className="ww-step" key={`step-${stepItem.n}`}>
-              <div className="ww-step-n">{stepItem.n}</div>
-              <h3 className="ww-step-title">{stepItem.title}</h3>
+          {stepsData.map((stepItem, index) => (
+            <div 
+              className={`ww-step ${activeStep === index ? 'ww-step-active' : ''}`} 
+              key={`step-${stepItem.n}`}
+              onClick={() => handleStepClick(index)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="ww-step-header">
+                <div className="ww-step-n">{stepItem.n}.</div>
+                <h3 className="ww-step-title">{stepItem.title}</h3>
+              </div>
               <p className="ww-step-body">{stepItem.body}</p>
+              
+              {/* The Progress Bar Container */}
+              <div className="ww-step-progress-bg">
+                <div 
+                  className="ww-step-progress-fill" 
+                  style={{ width: activeStep === index ? `${progress}%` : '0%' }}
+                />
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Dynamic Visual Display Area */}
+        <div className="ww-how-display">
+          <div className="ww-display-inner">
+             {stepsData.map((step, index) => (
+               <img 
+                 key={index}
+                 src={step.image} 
+                 alt={step.title}
+                 className={`ww-display-img ${activeStep === index ? 'active' : ''}`}
+               />
+             ))}
+          </div>
         </div>
       </section>
 

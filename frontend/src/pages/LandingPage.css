@@ -171,7 +171,7 @@
   font-size: 80px; line-height: 1; color: var(--dark); margin-bottom: 6px;
 }
 .ww-stat-num span { color: var(--orange); }
-.ww-stat-label { font-size: 16px; color: var(--mid); font-weight: 300; max-width: 200px; line-height: 1.5; }
+.ww-stat-label { font-size: 16px; color: var(--mid); font-weight: 300; max-width: 200px; line-height: 1.8; }
 .ww-stat-divider { height: 1px; background: var(--line); }
 
 /* ── FEATURES ── */
@@ -291,7 +291,6 @@
   background: #F7F6F3;
   border-radius: 20px;
   padding: 40px;
-  border: 1px solid var(--line);
 }
 .ww-display-inner {
   position: relative;
@@ -299,7 +298,6 @@
   aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
 }
 .ww-display-img {
   position: absolute;

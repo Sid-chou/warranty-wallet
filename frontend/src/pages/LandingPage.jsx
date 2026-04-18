@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo1.png";
+import card1 from "../assets/card1.png";
+import card2 from "../assets/card2.png";
+import card3 from "../assets/card3.png";
 import "./LandingPage.css";
 
 const tickerItems = [
@@ -34,19 +37,19 @@ const stepsData = [
     n: 1,
     title: "Upload your bill",
     body: "Take a photo of any receipt or warranty card. Any format, any quality. Just upload it.",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80"
+    image: card1
   },
   {
     n: 2,
     title: "AI reads everything",
     body: "Gemini reads the bill and pulls out every relevant field — product, date, warranty period, price — in seconds.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
+    image: card2
   },
   {
     n: 3,
     title: "We handle the rest",
     body: "Your warranty is tracked, categorised, and monitored. You'll hear from us before it expires.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
+    image: card3
   }
 ];
 

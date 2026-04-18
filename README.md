@@ -6,7 +6,7 @@ Warranty Wallet turns messy purchase receipts into smart, structured, searchable
 
 Stop digging through old emails and crumpled bills. Keep every warranty in one clean dashboard with smart status tracking (Active / Expiring Soon / Expired).
 
-![Dashboard Screenshot](frontend/src/assets/dasboard.jpeg)
+![Dashboard Screenshot](frontend/src/assets/Landing.png)
 <!-- Add your actual screenshots here: dashboard, upload flow, PDF preview, etc. -->
 
 ## ✨ Key Features

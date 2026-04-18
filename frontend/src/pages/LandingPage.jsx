@@ -1,0 +1,198 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "./LandingPage.css";
+
+const tickerItems = [
+  "Never lose a warranty again",
+  "Upload any bill in seconds",
+  "AI reads every field for you",
+  "Expiry alerts before it's too late",
+  "Every product. Every warranty.",
+];
+
+const featuresData = [
+  {
+    step: "01 — Upload",
+    title: "Any Bill. Any Format.",
+    body: "Photo, PDF, screenshot — it doesn't matter. AI reads the product, date, merchant, warranty period, and serial number. No manual entry. Ever."
+  },
+  {
+    step: "02 — Alerts",
+    title: "Know Before It's Too Late.",
+    body: "Get notified 30 days before any warranty expires. Not the day after. Every claim window stays open until you decide to close it."
+  },
+  {
+    step: "03 — Find",
+    title: "Anything. In Seconds.",
+    body: "Every bill organised by category — electronics, appliances, vehicles. Search by product or merchant. Find it before you need a service centre."
+  }
+];
+
+const stepsData = [
+  {
+    n: 1,
+    title: "Upload your bill",
+    body: "Take a photo of any receipt or warranty card. Any format, any quality. Just upload it."
+  },
+  {
+    n: 2,
+    title: "AI reads everything",
+    body: "Gemini reads the bill and pulls out every relevant field — product, date, warranty period, price — in seconds."
+  },
+  {
+    n: 3,
+    title: "We handle the rest",
+    body: "Your warranty is tracked, categorised, and monitored. You'll hear from us before it expires — and only then."
+  }
+];
+
+export default function LandingPage() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className="ww-page-container">
+      {/* NAV */}
+      <nav className={`ww-nav ${scrolled ? 'nav-scrolled' : ''}`}>
+        <Link to="/" className="ww-logo">
+          <div className="ww-logo-dot" />
+          <span className="ww-logo-text">Warranty Wallet</span>
+        </Link>
+        <ul className="ww-nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div className="ww-nav-right">
+          <Link to="/login" className="ww-nav-login">Login</Link>
+          <Link to="/signup" className="ww-btn">Get Started</Link>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section className="ww-hero">
+        <p className="ww-hero-label ww-animate">Warranty Management</p>
+        <h1 className="ww-hero-h1 ww-animate-2">
+          TOO MANY BILLS.<br />
+          <em>NO SYSTEM.</em>
+        </h1>
+        <p className="ww-hero-sub ww-animate-3">
+          Most people have dozens of products with active warranties and no idea
+          where the bills are. Warranty Wallet fixes that — one upload, tracked forever.
+        </p>
+        <div className="ww-hero-ctas ww-animate-4">
+          <a href="#how" className="ww-btn ww-btn-lg">
+            See How It Works
+          </a>
+          <Link to="/signup" className="ww-btn-ghost ww-btn-lg">
+            Sign up free
+          </Link>
+        </div>
+      </section>
+
+      {/* TICKER */}
+      <div className="ww-ticker">
+        <div className="ww-ticker-inner">
+          {[...tickerItems, ...tickerItems].map((item, i) => (
+            <span className="ww-ticker-item" key={`ticker-${i}`}>
+              {item}
+              <span className="ww-ticker-dot" />
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* PROBLEM */}
+      <section className="ww-problem">
+        <div className="ww-problem-left">
+          <h2 className="ww-problem-big">
+            THE BILL IS GONE.<br />
+            THE WARRANTY<br />
+            <em>STILL ISN'T.</em>
+          </h2>
+          <p className="ww-problem-body">
+            When something breaks, the clock starts ticking. You need the receipt,
+            the warranty card, the purchase date — and most people can't find any of it.
+            That's not a memory problem. That's a systems problem.
+          </p>
+        </div>
+        <div className="ww-problem-right">
+          <div>
+            <div className="ww-stat-num">15<span>+</span></div>
+            <div className="ww-stat-label">Active warranties in an average household — most of them untracked.</div>
+          </div>
+          <div className="ww-stat-divider" />
+          <div>
+            <div className="ww-stat-num"><span>₹</span>0</div>
+            <div className="ww-stat-label">Claimed on most expired warranties because nobody knew in time.</div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="ww-features" id="features">
+        <div className="ww-features-top">
+          <h2 className="ww-features-title">WHAT CHANGES<br />WHEN YOU USE IT</h2>
+          <p className="ww-features-sub">Three things — nothing more, nothing less.</p>
+        </div>
+        <div className="ww-features-grid">
+          {featuresData.map((feature, featureIndex) => (
+            <div className="ww-feature" key={`feature-${featureIndex}`}>
+              <p className="ww-feat-n">{feature.step}</p>
+              <h3 className="ww-feat-title">{feature.title}</h3>
+              <p className="ww-feat-body">{feature.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="ww-how" id="how">
+        <p className="ww-how-label">How It Works</p>
+        <h2 className="ww-how-title">THREE STEPS.<br />DONE.</h2>
+        <div className="ww-steps">
+          {stepsData.map((stepItem) => (
+            <div className="ww-step" key={`step-${stepItem.n}`}>
+              <div className="ww-step-n">{stepItem.n}</div>
+              <h3 className="ww-step-title">{stepItem.title}</h3>
+              <p className="ww-step-body">{stepItem.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA FINAL */}
+      <section className="ww-cta">
+        <h2 className="ww-cta-h">
+          STOP LOSING<br />MONEY ON<br /><em>LOST BILLS.</em>
+        </h2>
+        <p className="ww-cta-sub">
+          It takes two minutes to get started. Your first warranty upload is free.
+        </p>
+        <Link to="/signup" className="ww-btn ww-btn-xl">
+          Get Started Free
+        </Link>
+        <p className="ww-cta-note">No credit card required</p>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="ww-footer">
+        <Link to="/" className="ww-logo">
+          <div className="ww-logo-dot" />
+          <span className="ww-logo-text">Warranty Wallet</span>
+        </Link>
+        <ul className="ww-footer-links">
+          <li><a href="#privacy">Privacy</a></li>
+          <li><a href="#terms">Terms</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <span className="ww-footer-copy">© {new Date().getFullYear()} Warranty Wallet</span>
+      </footer>
+    </div>
+  );
+}

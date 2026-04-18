@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo1.png";
 import "./LandingPage.css";
 
 const tickerItems = [
@@ -57,25 +58,26 @@ export default function LandingPage() {
   // Handle auto-switching logic
   useEffect(() => {
     const duration = 6000; // 6 seconds per step
-    const intervalTime = 100;
-    const increment = (intervalTime / duration) * 100;
+    const startTime = Date.now();
 
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setActiveStep((prevStep) => (prevStep + 1) % stepsData.length);
-          return 0;
-        }
-        return prev + increment;
-      });
-    }, intervalTime);
+      const elapsed = Date.now() - startTime;
+      const calculatedProgress = (elapsed / duration) * 100;
+
+      if (calculatedProgress >= 100) {
+        setProgress(100);
+        setActiveStep((current) => (current + 1) % stepsData.length);
+      } else {
+        setProgress(calculatedProgress);
+      }
+    }, 50);
 
     return () => clearInterval(timer);
-  }, [activeStep]);
+  }, [activeStep]); // Re-runs and resets timer when step changes
 
   const handleStepClick = (index) => {
     setActiveStep(index);
-    setProgress(0); // Reset progress on manual click
+    setProgress(0); 
   };
 
   useEffect(() => {
@@ -88,37 +90,42 @@ export default function LandingPage() {
     <div className="ww-page-container">
       {/* NAV */}
       <nav className={`ww-nav ${scrolled ? 'nav-scrolled' : ''}`}>
-        <Link to="/" className="ww-logo">
-          <div className="ww-logo-dot" />
-          <span className="ww-logo-text">Warranty Wallet</span>
-        </Link>
-        <ul className="ww-nav-links">
-          <li><a href="#features">Features</a></li>
-          <li><a href="#how">How It Works</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ul>
-        <div className="ww-nav-right">
-          <Link to="/login" className="ww-nav-login">Login</Link>
-          <Link to="/signup" className="ww-btn">Get Started</Link>
+        <div className="ww-nav-container">
+          <Link to="/" className="ww-logo">
+            <img src={logo} alt="Warranty Wallet" className="ww-logo-img" />
+            <a className="ww-logo-text">Warranty Wallet</a>
+          </Link>
+          <ul className="ww-nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how">How It Works</a></li>
+            {/* <li><a href="#faq">FAQ</a></li> */}
+          </ul>
+          <div className="ww-nav-right">
+            <Link to="/login" className="ww-nav-login">Login</Link>
+            <Link to="/signup" className="ww-btn">Get Started</Link>
+          </div>
         </div>
       </nav>
 
       {/* HERO */}
       <section className="ww-hero">
-        <h1 className="ww-hero-h1 ww-animate-2">
-          TOO MANY BILLS.<br />
-          <em>NO SYSTEM.</em>
-        </h1>
-        <p className="ww-hero-sub ww-animate-3">
-          Ditch the paper clutter. Securely store your bills and get notified before your purchase protections expire.
-        </p>
-        <div className="ww-hero-ctas ww-animate-4">
-          <a href="#how" className="ww-btn ww-btn-lg">
-            See How It Works
-          </a>
-          <Link to="/signup" className="ww-btn-ghost ww-btn-lg">
-            Sign up free
-          </Link>
+        <div className="ww-container">
+          {/* <p className="ww-hero-label ww-animate">Warranty Management</p> */}
+          <h1 className="ww-hero-h1 ww-animate-2">
+            Your Warranties on <br />
+            <em>Autopilot</em>
+          </h1>
+          <p className="ww-hero-sub ww-animate-3">
+            Ditch the paper clutter. Securely store your bills and get notified before your purchase protections expire.
+          </p>
+          <div className="ww-hero-ctas ww-animate-4">
+            <a href="#how" className="ww-btn ww-btn-lg">
+              See How It Works
+            </a>
+            <Link to="/signup" className="ww-btn-ghost ww-btn-lg">
+              Sign up free
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -136,88 +143,94 @@ export default function LandingPage() {
 
       {/* PROBLEM */}
       <section className="ww-problem">
-        <div className="ww-problem-left">
-          <h2 className="ww-problem-big">
-            THE BILL IS GONE.<br />
-            THE WARRANTY<br />
-            <em>STILL ISN'T.</em>
-          </h2>
-          <p className="ww-problem-body">
-            When something breaks, the clock starts ticking. You need the receipt,
-            the warranty card, the purchase date — and most people can't find any of it.
-            That's not a memory problem. That's a systems problem.
-          </p>
-        </div>
-        <div className="ww-problem-right">
-          <div>
-            <div className="ww-stat-num">15<span>+</span></div>
-            <div className="ww-stat-label">Active warranties in an average household — most of them untracked.</div>
+        <div className="ww-container ww-problem-grid">
+          <div className="ww-problem-left">
+            <h2 className="ww-problem-big">
+              THE BILL IS GONE.<br />
+              THE WARRANTY<br />
+              <em>STILL ISN'T.</em>
+            </h2>
+            <p className="ww-problem-body">
+              When something breaks, the clock starts ticking. You need the receipt,
+              the warranty card, the purchase date — and most people can't find any of it.
+              That's not a memory problem. That's a systems problem.
+            </p>
           </div>
-          <div className="ww-stat-divider" />
-          <div>
-            <div className="ww-stat-num"><span>₹</span>0</div>
-            <div className="ww-stat-label">Claimed on most expired warranties because nobody knew in time.</div>
+          <div className="ww-problem-right">
+            <div>
+              <div className="ww-stat-num">15<span>+</span></div>
+              <div className="ww-stat-label">Active warranties in an average household — most of them untracked.</div>
+            </div>
+            <div className="ww-stat-divider" />
+            <div>
+              <div className="ww-stat-num"><span>₹</span>0</div>
+              <div className="ww-stat-label">Claimed on most expired warranties because nobody knew in time.</div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* FEATURES */}
       <section className="ww-features" id="features">
-        <div className="ww-features-top">
-          <h2 className="ww-features-title">WHAT CHANGES<br />WHEN YOU USE IT</h2>
-          <p className="ww-features-sub">Three things — nothing more, nothing less.</p>
-        </div>
-        <div className="ww-features-grid">
-          {featuresData.map((feature, featureIndex) => (
-            <div className="ww-feature" key={`feature-${featureIndex}`}>
-              <p className="ww-feat-n">{feature.step}</p>
-              <h3 className="ww-feat-title">{feature.title}</h3>
-              <p className="ww-feat-body">{feature.body}</p>
-            </div>
-          ))}
+        <div className="ww-container">
+          <div className="ww-features-top">
+            <h2 className="ww-features-title">WHAT CHANGES<br />WHEN YOU USE IT</h2>
+            {/* <p className="ww-features-sub">Three things — nothing more, nothing less.</p> */}
+          </div>
+          <div className="ww-features-grid">
+            {featuresData.map((feature, featureIndex) => (
+              <div className="ww-feature" key={`feature-${featureIndex}`}>
+                <p className="ww-feat-n">{feature.step}</p>
+                <h3 className="ww-feat-title">{feature.title}</h3>
+                <p className="ww-feat-body">{feature.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
       <section className="ww-how" id="how">
-        <p className="ww-how-label">How It Works</p>
-        <h2 className="ww-how-title">THREE STEPS.<br />DONE.</h2>
-        <div className="ww-steps">
-          {stepsData.map((stepItem, index) => (
-            <div 
-              className={`ww-step ${activeStep === index ? 'ww-step-active' : ''}`} 
-              key={`step-${stepItem.n}`}
-              onClick={() => handleStepClick(index)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="ww-step-header">
-                <div className="ww-step-n">{stepItem.n}.</div>
-                <h3 className="ww-step-title">{stepItem.title}</h3>
+        <div className="ww-container">
+          <p className="ww-how-label">How It Works</p>
+          <h2 className="ww-how-title">THREE STEPS.<br />DONE.</h2>
+          <div className="ww-steps">
+            {stepsData.map((stepItem, index) => (
+              <div 
+                className={`ww-step ${activeStep === index ? 'ww-step-active' : ''}`} 
+                key={`step-${stepItem.n}`}
+                onClick={() => handleStepClick(index)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="ww-step-header">
+                  <div className="ww-step-n">{stepItem.n}.</div>
+                  <h3 className="ww-step-title">{stepItem.title}</h3>
+                </div>
+                <p className="ww-step-body">{stepItem.body}</p>
+                
+                {/* The Progress Bar Container */}
+                <div className="ww-step-progress-bg">
+                  <div 
+                    className="ww-step-progress-fill" 
+                    style={{ width: activeStep === index ? `${progress}%` : '0%' }}
+                  />
+                </div>
               </div>
-              <p className="ww-step-body">{stepItem.body}</p>
-              
-              {/* The Progress Bar Container */}
-              <div className="ww-step-progress-bg">
-                <div 
-                  className="ww-step-progress-fill" 
-                  style={{ width: activeStep === index ? `${progress}%` : '0%' }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Dynamic Visual Display Area */}
-        <div className="ww-how-display">
-          <div className="ww-display-inner">
-             {stepsData.map((step, index) => (
-               <img 
-                 key={index}
-                 src={step.image} 
-                 alt={step.title}
-                 className={`ww-display-img ${activeStep === index ? 'active' : ''}`}
-               />
-             ))}
+          {/* Dynamic Visual Display Area */}
+          <div className="ww-how-display">
+            <div className="ww-display-inner">
+              {stepsData.map((step, index) => (
+                <img 
+                  key={index}
+                  src={step.image} 
+                  alt={step.title}
+                  className={`ww-display-img ${activeStep === index ? 'active' : ''}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -238,16 +251,18 @@ export default function LandingPage() {
 
       {/* FOOTER */}
       <footer className="ww-footer">
-        <Link to="/" className="ww-logo">
-          <div className="ww-logo-dot" />
-          <span className="ww-logo-text">Warranty Wallet</span>
-        </Link>
-        <ul className="ww-footer-links">
-          <li><a href="#privacy">Privacy</a></li>
-          <li><a href="#terms">Terms</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-        <span className="ww-footer-copy">© {new Date().getFullYear()} Warranty Wallet</span>
+        <div className="ww-nav-container">
+          <Link to="/" className="ww-logo">
+            <img src={logo} alt="Warranty Wallet" className="ww-logo-footer" />
+            <span className="ww-logo-text">Warranty Wallet</span>
+          </Link>
+          <ul className="ww-footer-links">
+            <li><a href="#privacy">Privacy</a></li>
+            <li><a href="#terms">Terms</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <span className="ww-footer-copy">© {new Date().getFullYear()} Warranty Wallet</span>
+        </div>
       </footer>
     </div>
   );

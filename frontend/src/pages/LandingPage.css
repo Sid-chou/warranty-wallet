@@ -24,18 +24,47 @@
   padding: 0; 
 }
 
+.ww-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 /* Navbar */
 .ww-nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(255,255,255,0.94);
-  backdrop-filter: blur(14px);
+  background: white; /* Forced white background per request */
   border-bottom: 1px solid var(--line);
-  padding: 0 6%; height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
 }
-.ww-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.ww-logo-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); }
-.ww-logo-text { font-size: 15px; font-weight: 600; color: var(--dark); letter-spacing: -0.01em; }
+.ww-nav-container {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 24px;
+}
+.ww-logo {
+  display: flex;
+  align-items: center;
+  gap: 0px; 
+  text-decoration: none;
+}
+.ww-logo-img { 
+  height: 72px; /* Balanced height for better fit */
+  width: auto; 
+  display: block;
+  margin-right: -10px; /* Pulls text closer if image has internal padding */
+}
+.ww-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.02em;
+}
+.ww-logo-footer { height: 48px; width: auto; opacity: 0.8; }
 
 .ww-nav-links { display: flex; gap: 36px; list-style: none; }
 .ww-nav-links a { font-size: 14px; color: var(--mid); text-decoration: none; transition: color 0.15s; }
@@ -69,22 +98,22 @@
 
 /* ── HERO ── */
 .ww-hero {
-  padding: 120px 6% 100px;
+  padding: 120px 24px 100px;
   text-align: center;
-  display: flex; flex-direction: column; align-items: center;
 }
 .ww-hero-label {
   font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--orange);
   margin-bottom: 28px;
   display: flex; align-items: center; gap: 10px;
+  justify-content: center;
 }
 .ww-hero-label::before, .ww-hero-label::after {
   content: ''; display: block; width: 28px; height: 1px; background: var(--orange); opacity: 0.5;
 }
 .ww-hero-h1 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(80px, 12vw, 160px);
+  font-size: clamp(60px, 12vw, 120px);
   line-height: 0.9;
   letter-spacing: 0.01em;
   color: var(--dark);
@@ -93,7 +122,7 @@
 .ww-hero-h1 em { font-style: normal; color: var(--orange); }
 .ww-hero-sub {
   font-size: 18px; color: var(--mid); line-height: 1.65;
-  font-weight: 300; max-width: 480px; margin-bottom: 48px;
+  font-weight: 300; max-width: 480px; margin: 0 auto 48px;
 }
 .ww-hero-ctas { display: flex; align-items: center; gap: 14px; justify-content: center; }
 
@@ -101,6 +130,9 @@
 .ww-ticker {
   background: var(--dark); color: white;
   padding: 14px 0; overflow: hidden; white-space: nowrap;
+  /* Edge fade logic per request */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
 .ww-ticker-inner {
   display: inline-flex; gap: 48px;
@@ -116,7 +148,9 @@
 
 /* ── PROBLEM ── */
 .ww-problem {
-  padding: 120px 6%;
+  padding: 120px 24px;
+}
+.ww-problem-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
 }
 .ww-problem-big {
@@ -303,8 +337,8 @@
 
 /* ── FOOTER ── */
 .ww-footer {
-  border-top: 1px solid var(--line); padding: 28px 6%;
-  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--line); padding: 10px 220px;
+  align-items: center; justify-content: center;
 }
 .ww-footer-links { display: flex; gap: 28px; list-style: none; }
 .ww-footer-links a { font-size: 13px; color: var(--mid); text-decoration: none; }

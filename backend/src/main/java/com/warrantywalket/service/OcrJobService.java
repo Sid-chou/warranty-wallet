@@ -5,7 +5,9 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -14,6 +16,7 @@ public class OcrJobService {
     private static final String QUEUE_KEY = "ocr:queue";
     private static final String STATUS_PREFIX = "ocr:status:";
     private static final String RESULT_PREFIX = "ocr:result:";
+    private static final int AVG_JOB_SECONDS = 22;
 
     @Autowired
     private RedisCommands<String, String> redisCommands;
@@ -33,15 +36,21 @@ public class OcrJobService {
         return jobId;
     }
 
-    // Called by frontend polling
-    public String getStatus(String jobId) {
+    // Called by controller for status polling — returns rich object for frontend
+    public Map<String, Object> getStatus(String jobId) {
         String status = redisCommands.get(STATUS_PREFIX + jobId);
-        return status != null ? status : "not_found";
-    }
+        long queueDepth = redisCommands.llen(QUEUE_KEY);
 
-    // Called by frontend when status is "done"
-    public String getResult(String jobId) {
-        return redisCommands.get(RESULT_PREFIX + jobId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", status != null ? status : "not_found");
+        response.put("queuePosition", queueDepth);
+        response.put("estimatedWaitSeconds", queueDepth * AVG_JOB_SECONDS);
+
+        if ("done".equals(status)) {
+            response.put("data", redisCommands.get(RESULT_PREFIX + jobId));
+        }
+
+        return response;
     }
 
     // Called by worker to pick up next job
@@ -61,7 +70,12 @@ public class OcrJobService {
 
     // Called by worker when OCR fails
     public void markFailed(String jobId, String reason) {
-        redisCommands.set(STATUS_PREFIX + jobId, "failed:" + reason);
-        redisCommands.expire(STATUS_PREFIX + jobId, 3600);
+        redisCommands.setex(STATUS_PREFIX + jobId, 3600, "failed:" + reason);
+        String deadEntry = jobId + "|" + reason + "|" + Instant.now();
+        redisCommands.lpush("ocr:dead", deadEntry);
+    }
+
+    public long getQueueSize() {
+        return redisCommands.llen(QUEUE_KEY);
     }
 }

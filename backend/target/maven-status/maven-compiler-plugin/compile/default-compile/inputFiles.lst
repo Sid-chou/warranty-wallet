@@ -17,6 +17,7 @@ C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\ma
 C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\dto\SignupRequest.java
 C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\service\OcrJobService.java
 C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\model\User.java
+C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\config\WorkerConfig.java
 C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\security\OAuth2AuthenticationSuccessHandler.java
 C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\controller\UserController.java
 C:\Users\LENOVO\Desktop\all project\week 1 upload\warranty-wallet\backend\src\main\java\com\warrantywalket\repository\UserRepository.java

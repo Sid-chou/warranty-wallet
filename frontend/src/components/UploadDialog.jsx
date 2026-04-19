@@ -96,7 +96,7 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                     // Update UI with queue info
                     if (queuePosition !== undefined) {
                         setQueueInfo({ position: queuePosition, wait: estimatedWaitSeconds });
-                        
+
                         if (queuePosition > 1) {
                             setQueueMessage(`Position: ${queuePosition}`);
                         } else if (queuePosition === 1) {
@@ -121,8 +121,8 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
 
                     // Adaptive polling interval based on queue depth
                     const nextInterval = queuePosition > 5 ? 10_000
-                                       : queuePosition > 1 ? 5_000
-                                       : 2_000;
+                        : queuePosition > 1 ? 5_000
+                            : 2_000;
 
                     setTimeout(poll, nextInterval);
                 } catch (err) {
@@ -264,25 +264,10 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                         )}
                         {processingStatus === 'processing' && (
                             <Box sx={{ mt: 3, p: 2, bgcolor: 'action.hover', borderRadius: 2, textAlign: 'center' }}>
-                                <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2 }}>
-                                    <TbLoaderQuarter 
-                                        style={{ 
-                                            fontSize: 48, 
-                                            color: '#ed6c02',
-                                            animation: 'spin 2s linear infinite'
-                                        }} 
-                                    />
-                                    <style>{`
-                                        @keyframes spin {
-                                            from { transform: rotate(0deg); }
-                                            to { transform: rotate(360deg); }
-                                        }
-                                    `}</style>
-                                </Box>
-                                <Typography variant="body1" fontWeight="600" color="warning.main">
+                                <Typography variant="h6" fontWeight="600" color="warning.main" sx={{ mb: 2 }}>
                                     {queueMessage || 'Scanning Your Bill'}
                                 </Typography>
-                                
+
                                 {queueInfo.position > 0 && (
                                     <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 2 }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -293,7 +278,7 @@ const UploadDialog = ({ open, onClose, onSuccess }) => {
                                         </Box>
                                     </Box>
                                 )}
-                                <LinearProgress 
+                                <LinearProgress
                                     sx={{ mt: 2, height: 6, borderRadius: 3 }}
                                     color="warning"
                                 />
